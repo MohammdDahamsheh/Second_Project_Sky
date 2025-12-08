@@ -1,4 +1,6 @@
 
+using Microsoft.EntityFrameworkCore;
+using Infrastrucure;
 namespace Second_project_Api
 {
     public class Program
@@ -13,6 +15,11 @@ namespace Second_project_Api
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+
+
+            builder.Services.AddDbContext<TenderContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
 
             var app = builder.Build();
 
