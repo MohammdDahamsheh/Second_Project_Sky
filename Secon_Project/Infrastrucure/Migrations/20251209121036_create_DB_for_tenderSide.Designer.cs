@@ -4,6 +4,7 @@ using Infrastrucure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastrucure.Migrations
 {
     [DbContext(typeof(TenderContext))]
-    partial class TenderContextModelSnapshot : ModelSnapshot
+    [Migration("20251209121036_create_DB_for_tenderSide")]
+    partial class create_DB_for_tenderSide
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -22,23 +25,6 @@ namespace Infrastrucure.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("Domain.Entity.Roles", b =>
-                {
-                    b.Property<int>("roleId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("roleId"));
-
-                    b.Property<string>("roleName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("roleId");
-
-                    b.ToTable("Roles");
-                });
-
             modelBuilder.Entity("Domain.Entity.Tender", b =>
                 {
                     b.Property<int>("tenderId")
@@ -46,9 +32,6 @@ namespace Infrastrucure.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("tenderId"));
-
-                    b.Property<double>("budget")
-                        .HasColumnType("float");
 
                     b.Property<DateOnly>("closingDate")
                         .HasColumnType("date");
@@ -145,21 +128,6 @@ namespace Infrastrucure.Migrations
                     b.ToTable("tenderTypes");
                 });
 
-            modelBuilder.Entity("Domain.Entity.UserRoles", b =>
-                {
-                    b.Property<int>("userId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("roleId")
-                        .HasColumnType("int");
-
-                    b.HasKey("userId", "roleId");
-
-                    b.HasIndex("roleId");
-
-                    b.ToTable("UserRoles");
-                });
-
             modelBuilder.Entity("Domain.Entity.Users", b =>
                 {
                     b.Property<int>("userId")
@@ -222,30 +190,6 @@ namespace Infrastrucure.Migrations
                     b.Navigation("tender");
                 });
 
-            modelBuilder.Entity("Domain.Entity.UserRoles", b =>
-                {
-                    b.HasOne("Domain.Entity.Roles", "role")
-                        .WithMany("userRoles")
-                        .HasForeignKey("roleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Domain.Entity.Users", "user")
-                        .WithMany("userRoles")
-                        .HasForeignKey("userId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("role");
-
-                    b.Navigation("user");
-                });
-
-            modelBuilder.Entity("Domain.Entity.Roles", b =>
-                {
-                    b.Navigation("userRoles");
-                });
-
             modelBuilder.Entity("Domain.Entity.Tender", b =>
                 {
                     b.Navigation("tenderDocuments");
@@ -266,8 +210,6 @@ namespace Infrastrucure.Migrations
             modelBuilder.Entity("Domain.Entity.Users", b =>
                 {
                     b.Navigation("tenders");
-
-                    b.Navigation("userRoles");
                 });
 #pragma warning restore 612, 618
         }
