@@ -1,4 +1,5 @@
 ﻿using Applecation.Repository;
+using Domain.DTOs;
 using Domain.Entity;
 
 
@@ -15,11 +16,23 @@ namespace Applecation.Service
         }
         public async Task<Tender> GetTenderById(int id)
         {
+            
             return await tenderUnitOfWork.GetRepository.GetByIdAsync(id);
         }
-        public async Task<bool> AddTender(Tender tender)
+        public async Task<bool> AddTender(TenderDTO tender)
         {
-            var result = await tenderUnitOfWork.GetRepository.AddAsync(tender);
+            var tenderEntity = new Tender
+            {
+                tenderCategoryId = tender.tenderCategoryId,
+                tenderTypeId = tender.tenderTypeId,
+                closingDate = tender.closingDate,
+                tenderTitle = tender.tenderTitle,
+                tenderDescription = tender.tenderDescription,
+                issueDate = DateOnly.FromDateTime(DateTime.Now),
+                budget = tender.budget
+
+            };
+            var result = await tenderUnitOfWork.GetRepository.AddAsync(tenderEntity);
             if (result)
             {
                 await tenderUnitOfWork.SaveChangesAsync();
@@ -27,12 +40,12 @@ namespace Applecation.Service
             }
             return false;
         }
-        public async Task<bool> UpdateTender(int id,Tender tender)
+        public async Task<bool> UpdateTender(Tender tender)
         {
-            var existingTender = await tenderUnitOfWork.GetRepository.GetByIdAsync(id);
+            var existingTender = await tenderUnitOfWork.GetRepository.GetByIdAsync(tender.tenderId);
             if (existingTender == null)
             {
-                return false;
+                throw new Exception("Tender not found");
             }
             var result = await tenderUnitOfWork.GetRepository.UpdateAsync(tender);
             if (result)
@@ -43,6 +56,23 @@ namespace Applecation.Service
             return false;
         }
 
+        public async Task<bool> addTenderDocument(TenderDocumentDTO tenderDocumentDTO) {
+           
+            var tender=await tenderUnitOfWork.GetRepository.GetByIdAsync(tenderDocumentDTO.tenderId);
+            if(tender == null) {
+                throw new Exception("Tender not found");
+            }
+            var tenderDocument = new TenderDocument(
+                tenderDocumentDTO.tenderId,
+                tenderDocumentDTO.documentPath,
+                tenderDocumentDTO.addBy
+                );
+            tender.AddTenderDocument(tenderDocument);
+            await tenderUnitOfWork.SaveChangesAsync();
+
+            return true;
+
+        }
 
     }
 }

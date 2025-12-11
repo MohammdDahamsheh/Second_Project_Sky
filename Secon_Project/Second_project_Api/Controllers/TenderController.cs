@@ -1,4 +1,5 @@
 ﻿using Applecation.Service;
+using Domain.DTOs;
 using Domain.Entity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -27,7 +28,7 @@ namespace Second_project_Api.Controllers
             return Ok(tender);
         }
         [HttpPost("/Tenders")]
-        public async Task<IActionResult> AddTender([FromBody]Tender tender)
+        public async Task<IActionResult> AddTender([FromBody]TenderDTO tender)
         {
             var result = await tenderService.AddTender(tender);
             if (result)
@@ -37,15 +38,22 @@ namespace Second_project_Api.Controllers
             return BadRequest("Failed to add tender");
         }
 
-        [HttpPut("/Tenders/{id}")]
-        public async Task<IActionResult> UpdateTender(int id, [FromBody] Tender tender)
+        [HttpPut("/Tenders")]
+        public async Task<IActionResult> UpdateTender( [FromBody] Tender tender)
         {
-            var result = await tenderService.UpdateTender(id, tender);
+            var result = await tenderService.UpdateTender(tender);
             if (result)
             {
                 return Ok("Tender updated successfully");
             }
             return BadRequest("Failed to update tender");
         }
+
+
+        [HttpPost("/Tenders/Documents")]
+        public async Task<IActionResult> addDocumentTender([FromBody]TenderDocumentDTO tenderDocument) {
+            return Ok(await tenderService.addTenderDocument(tenderDocument));
+        }
+
     }
 }

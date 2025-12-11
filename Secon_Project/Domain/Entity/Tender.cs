@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Domain.Entity
 {
@@ -12,9 +8,9 @@ namespace Domain.Entity
         [Key]
         public int tenderId { get; set; }
         public string tenderTitle { get; set; }
-        public string? tenderDescription { get; set; }
-        public int userId { get; set; }
-        public Users user { get; set; }
+        public string tenderDescription { get; set; }
+        public int? userId { get; set; }
+        public Users? user { get; set; }
 
         public DateOnly issueDate { get; set; }
         public DateOnly closingDate { get; set; }
@@ -24,9 +20,14 @@ namespace Domain.Entity
         public int tenderTypeId { get; set; }
         public TenderType tenderType { get; set; }
 
-        public ICollection<TenderDocument> tenderDocuments { get; private set; }
+        public ICollection<TenderDocument>? tenderDocuments { get; private set; }
         public int tenderCategoryId { get; set; }
         public TenderCategory tenderCategory { get; set; }
+
+        public Tender()
+        {
+        }
+
         public Tender(string tenderTitle, int userId, DateOnly issueDate, DateOnly closingDate, int tenderTypeId, int tenderCategoryId)
         {
             this.tenderTitle = tenderTitle;
@@ -36,8 +37,32 @@ namespace Domain.Entity
             this.tenderTypeId = tenderTypeId;
             this.tenderCategoryId = tenderCategoryId;
         }
+
+        public Tender(
+            string tenderTitle,
+            string tenderDescription,
+            DateOnly issueDate,
+            DateOnly closingDate,
+            double budget,
+            int tenderTypeId,
+            int tenderCategoryId
+            )
+        {
+            this.tenderTitle = tenderTitle;
+            this.tenderDescription = tenderDescription;
+            this.issueDate = issueDate;
+            this.closingDate = closingDate;
+            this.budget = budget;
+            this.tenderTypeId = tenderTypeId;
+            this.tenderCategoryId = tenderCategoryId;
+        }
+
         public void AddTenderDocument(TenderDocument document)
         {
+            if (tenderDocuments == null)
+            {
+                tenderDocuments = new List<TenderDocument>();
+            }
             tenderDocuments.Add(document);
         }
 
