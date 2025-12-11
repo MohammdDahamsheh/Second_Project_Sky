@@ -17,13 +17,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Repository\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\Domain\Domain.csproj" />
     <ProjectReference Include="..\Infrastrucure\Infrastrucure.csproj" />
-    <ProjectReference Include="..\Second_project_Api\Second_project_Api.csproj" />
   </ItemGroup>
 
 </Project>
