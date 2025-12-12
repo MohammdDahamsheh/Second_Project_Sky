@@ -22,13 +22,13 @@ namespace Second_project_Api.Controllers
 
         }
         [HttpGet("/Tenders/{id}")]
-        public async Task<IActionResult> GetTenderById( int id)
+        public async Task<IActionResult> GetTenderById(int id)
         {
             var tender = await tenderService.GetTenderById(id);
             return Ok(tender);
         }
         [HttpPost("/Tenders")]
-        public async Task<IActionResult> AddTender([FromBody]TenderDTO tender)
+        public async Task<IActionResult> AddTender([FromBody] TenderDTO tender)
         {
             var result = await tenderService.AddTender(tender);
             if (result)
@@ -39,7 +39,7 @@ namespace Second_project_Api.Controllers
         }
 
         [HttpPut("/Tenders")]
-        public async Task<IActionResult> UpdateTender( [FromBody] Tender tender)
+        public async Task<IActionResult> UpdateTender([FromBody] Tender tender)
         {
             var result = await tenderService.UpdateTender(tender);
             if (result)
@@ -51,9 +51,16 @@ namespace Second_project_Api.Controllers
 
 
         [HttpPost("/Tenders/Documents")]
-        public async Task<IActionResult> addDocumentTender([FromBody]TenderDocumentDTO tenderDocument) {
+        public async Task<IActionResult> addDocumentTender([FromBody] TenderDocumentDTO tenderDocument)
+        {
             return Ok(await tenderService.addTenderDocument(tenderDocument));
         }
+        [HttpGet("/Tenders/Open")]
+        public async Task<IActionResult> GetOpenTenders()
+        {
+            var tenders = await tenderService.getOpenTenders();
+            return Ok(tenders);
 
+        }
     }
 }

@@ -9,8 +9,8 @@ namespace Domain.Entity
         public int tenderId { get; set; }
         public string tenderTitle { get; set; }
         public string tenderDescription { get; set; }
-        public int? userId { get; set; }
-        public Users? user { get; set; }
+        public int userId { get; set; }
+        public Users user { get; set; }
 
         public DateOnly issueDate { get; set; }
         public DateOnly closingDate { get; set; }

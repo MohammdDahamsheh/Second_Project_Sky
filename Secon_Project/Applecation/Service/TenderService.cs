@@ -1,15 +1,21 @@
 ﻿using Applecation.Repository;
 using Domain.DTOs;
 using Domain.Entity;
+using Infrastrucure;
+using Microsoft.EntityFrameworkCore;
 
 
 namespace Applecation.Service
 {
     public class TenderService
     {
+        private readonly TenderContext context;
+
         private readonly IUnitOfWork<Tender> tenderUnitOfWork;
-        public TenderService(IUnitOfWork<Tender> tenderUnitOfWork) 
-        { this.tenderUnitOfWork = tenderUnitOfWork; }
+        public TenderService(IUnitOfWork<Tender> tenderUnitOfWork,TenderContext context) 
+        { this.tenderUnitOfWork = tenderUnitOfWork;
+            this.context = context;
+        }
         public async Task<IEnumerable<Tender>> GetAllTenders()
         {
             return await tenderUnitOfWork.GetRepository.GetAllAsync();
@@ -71,6 +77,38 @@ namespace Applecation.Service
             await tenderUnitOfWork.SaveChangesAsync();
 
             return true;
+
+        }
+        public async Task<IEnumerable<TendersOpenDTO>> getOpenTenders() {
+            var allTenders = await (from t in context.tenders
+                                    join type in context.tenderTypes
+                                    on t.tenderTypeId equals type.tenderTypeId
+                                    //join doc in context.tenderDocuments
+                                    //on t.tenderId equals doc.tenderId 
+                                    where type.typeName == "Open"
+                                    select new TendersOpenDTO {
+                                        budget = t.budget,
+                                        closingDate = t.closingDate,
+                                        issueDate = t.issueDate,
+                                        tenderCategoryName = t.tenderCategory.categoryName,
+                                        tenderDescription = t.tenderDescription,
+                                        tenderTitle = t.tenderTitle,
+                                        tenderTypeName = type.typeName,
+                                        userName = t.user.userName,
+                                        tenderDocumentsPath = (
+                                        from doc in t.tenderDocuments
+                                        where doc.tenderId == t.tenderId
+                                        select doc.documentPath
+
+                                        ).ToList()
+                                    }
+                                    ).ToListAsync();
+            if (allTenders == null || allTenders.Count == 0) {
+                throw new Exception("No open tenders found");
+            }
+            return allTenders;
+
+
 
         }
 
