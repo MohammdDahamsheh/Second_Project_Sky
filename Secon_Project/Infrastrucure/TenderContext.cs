@@ -3,6 +3,7 @@
 // If the namespace is different, update it accordingly.
 
 using Domain.Entity;
+using Domain.Entity.Bids;
 namespace Infrastrucure
 {
     public class TenderContext : DbContext
@@ -12,6 +13,10 @@ namespace Infrastrucure
         public DbSet<TenderType> tenderTypes { get; set; }
         public DbSet<TenderCategory> tenderCategories { get; set; }
         public DbSet<TenderDocument> tenderDocuments { get; set; }
+        public DbSet<Roles> Roles { get; set; }
+        public DbSet<PaymentTerms> paymentTerms { get; set; }
+        public DbSet <Bid> bids { get; set; }
+        public DbSet <BidDocument> bidDocuments { get; set; }
 
         public TenderContext(DbContextOptions<TenderContext> options)
             : base(options)
@@ -57,6 +62,31 @@ namespace Infrastrucure
                 .HasOne(ur => ur.role)
                 .WithMany(r => r.userRoles)
                 .HasForeignKey(ur => ur.roleId);
+
+            modelBuilder.Entity<BidDocument>()
+                .HasOne(bd => bd.bid)
+                .WithMany(b => b.bidDocuments)
+                .HasForeignKey(bd => bd.bidId);
+
+            modelBuilder .Entity <Bid>()
+                .HasOne(b => b.tender)
+                .WithMany(t => t.bids)
+                .HasForeignKey(b => b.tenderId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<Users>()
+                .HasMany(u => u.bids)
+                .WithOne(b => b.user)
+                .HasForeignKey(b => b.userId);
+
+            modelBuilder.Entity <Bid>()
+                .HasOne(b => b.paymentTerms)
+                .WithOne(pt => pt.bid)
+                .HasForeignKey<Bid>(b => b.paymentTermsId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+
+
 
 
         }

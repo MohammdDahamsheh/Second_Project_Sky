@@ -4,6 +4,7 @@ using Infrastrucure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastrucure.Migrations
 {
     [DbContext(typeof(TenderContext))]
-    partial class TenderContextModelSnapshot : ModelSnapshot
+    [Migration("20251212131043_updateUserTable")]
+    partial class updateUserTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,86 +24,6 @@ namespace Infrastrucure.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("Domain.Entity.Bids.Bid", b =>
-                {
-                    b.Property<int>("bidId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("bidId"));
-
-                    b.Property<string>("CompanyName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("address")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("paymentTermsId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("tenderId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("userId")
-                        .HasColumnType("int");
-
-                    b.HasKey("bidId");
-
-                    b.HasIndex("paymentTermsId")
-                        .IsUnique();
-
-                    b.HasIndex("tenderId");
-
-                    b.HasIndex("userId");
-
-                    b.ToTable("bids");
-                });
-
-            modelBuilder.Entity("Domain.Entity.Bids.BidDocument", b =>
-                {
-                    b.Property<int>("bidDocumentId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("bidDocumentId"));
-
-                    b.Property<int>("bidId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("documentPath")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("bidDocumentId");
-
-                    b.HasIndex("bidId");
-
-                    b.ToTable("bidDocuments");
-                });
-
-            modelBuilder.Entity("Domain.Entity.Bids.PaymentTerms", b =>
-                {
-                    b.Property<int>("paymentTermsId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("paymentTermsId"));
-
-                    b.Property<string>("PenaltiesForDelays")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("termMethod")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("paymentTermsId");
-
-                    b.ToTable("paymentTerms");
-                });
 
             modelBuilder.Entity("Domain.Entity.Roles", b =>
                 {
@@ -273,44 +196,6 @@ namespace Infrastrucure.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("Domain.Entity.Bids.Bid", b =>
-                {
-                    b.HasOne("Domain.Entity.Bids.PaymentTerms", "paymentTerms")
-                        .WithOne("bid")
-                        .HasForeignKey("Domain.Entity.Bids.Bid", "paymentTermsId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.HasOne("Domain.Entity.Tender", "tender")
-                        .WithMany("bids")
-                        .HasForeignKey("tenderId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.HasOne("Domain.Entity.Users", "user")
-                        .WithMany("bids")
-                        .HasForeignKey("userId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("paymentTerms");
-
-                    b.Navigation("tender");
-
-                    b.Navigation("user");
-                });
-
-            modelBuilder.Entity("Domain.Entity.Bids.BidDocument", b =>
-                {
-                    b.HasOne("Domain.Entity.Bids.Bid", "bid")
-                        .WithMany("bidDocuments")
-                        .HasForeignKey("bidId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("bid");
-                });
-
             modelBuilder.Entity("Domain.Entity.Tender", b =>
                 {
                     b.HasOne("Domain.Entity.TenderCategory", "tenderCategory")
@@ -368,17 +253,6 @@ namespace Infrastrucure.Migrations
                     b.Navigation("user");
                 });
 
-            modelBuilder.Entity("Domain.Entity.Bids.Bid", b =>
-                {
-                    b.Navigation("bidDocuments");
-                });
-
-            modelBuilder.Entity("Domain.Entity.Bids.PaymentTerms", b =>
-                {
-                    b.Navigation("bid")
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("Domain.Entity.Roles", b =>
                 {
                     b.Navigation("userRoles");
@@ -386,8 +260,6 @@ namespace Infrastrucure.Migrations
 
             modelBuilder.Entity("Domain.Entity.Tender", b =>
                 {
-                    b.Navigation("bids");
-
                     b.Navigation("tenderDocuments");
                 });
 
@@ -405,8 +277,6 @@ namespace Infrastrucure.Migrations
 
             modelBuilder.Entity("Domain.Entity.Users", b =>
                 {
-                    b.Navigation("bids");
-
                     b.Navigation("tenders");
 
                     b.Navigation("userRoles");

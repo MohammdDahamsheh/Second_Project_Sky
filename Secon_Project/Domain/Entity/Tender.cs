@@ -1,4 +1,5 @@
 ﻿
+using Domain.Entity.Bids;
 using System.ComponentModel.DataAnnotations;
 
 namespace Domain.Entity
@@ -56,7 +57,7 @@ namespace Domain.Entity
             this.tenderTypeId = tenderTypeId;
             this.tenderCategoryId = tenderCategoryId;
         }
-
+        public IEnumerable<Bid>bids { get; set; }
         public void AddTenderDocument(TenderDocument document)
         {
             if (tenderDocuments == null)

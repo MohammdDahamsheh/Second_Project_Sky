@@ -100,7 +100,9 @@ namespace Applecation.Service
                                         where doc.tenderId == t.tenderId
                                         select doc.documentPath
 
-                                        ).ToList()
+                                        ).ToList(),
+                                        phoneNumber = t.user.phoneNumber,
+                                        userEmail = t.user.email
                                     }
                                     ).ToListAsync();
             if (allTenders == null || allTenders.Count == 0) {

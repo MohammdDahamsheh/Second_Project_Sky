@@ -13,6 +13,8 @@ namespace Domain.DTOs
         //public Users? user { get; set; }
 
         public string userName { get; set; }
+        public string userEmail { get; set; }
+        public string phoneNumber { get; set; }
 
         public DateOnly issueDate { get; set; }
         public DateOnly closingDate { get; set; }
