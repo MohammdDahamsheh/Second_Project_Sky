@@ -23,6 +23,5 @@ namespace Second_project_Api.Controllers
         {
             return Ok(await bidService.addDocument(bidDocument));
         }
-        [HttpGet("/Bids/{id}    ")]
     }
 }
