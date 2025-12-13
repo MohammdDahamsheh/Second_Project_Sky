@@ -28,6 +28,7 @@ namespace Second_project_Api
             builder.Services.AddScoped(typeof(IUnitOfWork<>), typeof(UnitOfWork<>));
             //add services:
             builder.Services.AddScoped(typeof(TenderService));
+            builder.Services.AddScoped(typeof(BidService));
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
