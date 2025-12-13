@@ -12,6 +12,8 @@ namespace Domain.DTOs
         public int tenderId { get; set; }
         public string CompanyName { get; set; }
         public string address { get; set; }
+        public decimal totalBidAmount { get; set; }
+
 
 
         // Payment Terms Details

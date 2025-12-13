@@ -37,9 +37,6 @@ namespace Second_project_Api.Controllers
             var result = await bidService.declaretion(bidId);
             return Ok(result);
         }
-
-
-
-
+        
     }
 }

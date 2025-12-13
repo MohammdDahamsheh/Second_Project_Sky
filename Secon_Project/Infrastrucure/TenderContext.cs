@@ -5,6 +5,8 @@
 using Domain.Entity;
 using Domain.Entity.Bids;
 using System.Reflection.Emit;
+using Domain.DTOs;
+using Domain.Entity.Evaluation;
 namespace Infrastrucure
 {
     public class TenderContext : DbContext
@@ -22,7 +24,7 @@ namespace Infrastrucure
         public DbSet<TechnicalProposal>technicalProposals { get; set; }
         public DbSet<FinancialProposal> financialProposals { get; set; }
         public DbSet<Declaretion> declaretions { get; set; }
-
+        public DbSet<WinBid> winBids { get; set; }
         public TenderContext(DbContextOptions<TenderContext> options)
             : base(options)
         {
@@ -112,6 +114,17 @@ namespace Infrastrucure
                 .WithOne(d => d.bid)
                 .HasForeignKey<Declaretion>(d => d.bidId);
 
+            modelBuilder.Entity<WinBid>()
+                .HasOne(w => w.bid)
+                .WithOne(b => b.winBid)
+                .HasForeignKey<WinBid>(b => b.bidId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<WinBid>()
+                .HasOne(w=>w.tender)
+                .WithOne(t=>t.winBid)
+                .HasForeignKey<WinBid>(w => w.tenderId)
+                .OnDelete(DeleteBehavior.NoAction);
 
 
 

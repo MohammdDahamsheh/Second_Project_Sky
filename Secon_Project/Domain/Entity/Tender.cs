@@ -1,5 +1,6 @@
 ﻿
 using Domain.Entity.Bids;
+using Domain.Entity.Evaluation;
 using System.ComponentModel.DataAnnotations;
 
 namespace Domain.Entity
@@ -27,7 +28,7 @@ namespace Domain.Entity
         public IEnumerable<Bid> bids { get; set; }
         public ICollection<EligibilityCriteria> eligibilityCriterias { get; set; }
 
-
+        public WinBid winBid { get; set; }
 
         public Tender()
         {
