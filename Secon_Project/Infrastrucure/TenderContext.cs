@@ -4,6 +4,7 @@
 
 using Domain.Entity;
 using Domain.Entity.Bids;
+using System.Reflection.Emit;
 namespace Infrastrucure
 {
     public class TenderContext : DbContext
@@ -17,6 +18,9 @@ namespace Infrastrucure
         public DbSet<PaymentTerms> paymentTerms { get; set; }
         public DbSet <Bid> bids { get; set; }
         public DbSet <BidDocument> bidDocuments { get; set; }
+        public DbSet <EligibilityCriteria> EligibilityCriterias { get; set; }
+        public DbSet<TechnicalProposal>technicalProposals { get; set; }
+        public DbSet<FinancialProposal> financialProposals { get; set; }
 
         public TenderContext(DbContextOptions<TenderContext> options)
             : base(options)
@@ -36,6 +40,8 @@ namespace Infrastrucure
                 .WithOne(tt => tt.tender)
                 .HasForeignKey<Tender>(t => t.tenderTypeId);
 
+
+
             modelBuilder.Entity<Tender>()
                 .HasOne(t => t.tenderCategory)
                 .WithOne(tc => tc.tender)
@@ -45,6 +51,10 @@ namespace Infrastrucure
                 .HasOne(td => td.tender)
                 .WithMany(t => t.tenderDocuments)
                 .HasForeignKey(td => td.tenderId);
+            modelBuilder.Entity<Tender>()
+                .HasMany(t => t.eligibilityCriterias)
+                .WithOne(ec => ec.tender)
+                .HasForeignKey(ec => ec.tenderId);
 
             modelBuilder.Entity<Users>()
                 .HasMany(u => u.tenders)
@@ -65,8 +75,20 @@ namespace Infrastrucure
 
             modelBuilder.Entity<BidDocument>()
                 .HasOne(bd => bd.bid)
-                .WithMany(b => b.bidDocuments)
-                .HasForeignKey(bd => bd.bidId);
+                .WithOne(b => b.bidDocument)
+                .HasForeignKey<BidDocument>(bd => bd.bidId);
+            modelBuilder.Entity<BidDocument>()
+                .HasOne(bd => bd.technicalProposal)
+                .WithOne(tp => tp.bidDocument)
+                .HasForeignKey<BidDocument>(bd => bd.technicalProposalId);
+
+            modelBuilder.Entity<FinancialProposal>()
+                .HasOne(fp => fp.bidDocument)
+                .WithMany(bd => bd.financialProposal)
+                .HasForeignKey(fp => fp.bidDocumentId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+
 
             modelBuilder .Entity <Bid>()
                 .HasOne(b => b.tender)

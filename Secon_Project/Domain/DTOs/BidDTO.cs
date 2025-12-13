@@ -17,8 +17,11 @@ namespace Domain.DTOs
         // Payment Terms Details
         public string PenaltiesForDelays { get; set; }
         public string termMethod { get; set; }
+        public string PaymentScheduleAdvance { get; set; }
+        public string PaymentScheduleUponMilestoneCompletion { get; set; }
+        public string PaymentScheduleAdvanceFinalApproval { get; set; }
 
-        
+
 
 
     }

@@ -22,16 +22,18 @@ namespace Domain.Entity.Bids
         public PaymentTerms paymentTerms { get; set; }
         public int paymentTermsId { get; set; }
 
-        public ICollection<BidDocument> bidDocuments { get; private set; }
-        public void addBidDocument(BidDocument document) { 
-            if (bidDocuments == null)
-            {
-                bidDocuments = new List<BidDocument>();
-            }
+        //public int bidDocumentId { get; set; }
+        public BidDocument bidDocument { get; private set; }
 
-            bidDocuments.Add(document);
+        //public void addBidDocument(BidDocument document) { 
+        //    if (bidDocuments == null)
+        //    {
+        //        bidDocuments = new List<BidDocument>();
+        //    }
 
-        }
+        //    bidDocuments.Add(document);
+
+        //}
 
         public Bid()
         {

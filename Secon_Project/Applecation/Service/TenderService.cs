@@ -113,6 +113,35 @@ namespace Applecation.Service
 
 
         }
+        public async Task<EligibilityCriteriaDTO> AddEligibilityCriteria(EligibilityCriteriaDTO eligibilityCriteriaDTO) {
+              
+            var tender = await tenderUnitOfWork.GetRepository.GetByIdAsync(eligibilityCriteriaDTO.tenderId);
+            if (tender == null) {
+                throw new Exception("Tender not found");
+            }
+            var eligibilityCriteria = new EligibilityCriteria
+            (
+                 eligibilityCriteriaDTO.CriteriaDescription,
+                 eligibilityCriteriaDTO.tenderId
+            );
+            tender.AddEligibilityCriteria(eligibilityCriteria);
+            await context.SaveChangesAsync();
 
+            return eligibilityCriteriaDTO;
+        }
+
+        public async Task<IEnumerable<EligibilityCriteria>> getEligibilityCriterias(int tenderId)
+        {
+            var eligibilityCriterias = await(from ec in context.EligibilityCriterias
+                                             where ec.tenderId == tenderId
+                                             select ec
+                                             ).ToListAsync();
+            if (eligibilityCriterias == null || eligibilityCriterias.Count == 0) { 
+            throw new Exception("No eligibility criteria found for this tender");
+
+            }
+            return eligibilityCriterias;
+
+        }
     }
 }

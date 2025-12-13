@@ -62,5 +62,17 @@ namespace Second_project_Api.Controllers
             return Ok(tenders);
 
         }
+        [HttpPost("/Tenders/eligibilityCriterias")]
+        public async Task<IActionResult> addEligibilityCriterias([FromBody] EligibilityCriteriaDTO eligibilityCriteriaDTO)
+        {
+            var result = await tenderService.AddEligibilityCriteria(eligibilityCriteriaDTO);
+            return Ok(result);
+        }
+        [HttpGet("/Tenders/eligibilityCriterias/{tenderId}")]
+        public async Task<IActionResult> getEligibilityCriterias(int tenderId)
+        {
+            var result = await tenderService.getEligibilityCriterias(tenderId);
+            return Ok(result);
+        }
     }
 }

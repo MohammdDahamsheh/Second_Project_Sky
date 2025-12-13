@@ -14,6 +14,10 @@ namespace Domain.Entity.Bids
         public int paymentTermsId { get; set; }
         public string termMethod { get; set; }
         public string PenaltiesForDelays { get; set; }
+        public string PaymentScheduleAdvance { get; set; }
+        public string PaymentScheduleUponMilestoneCompletion { get; set; }
+        public string PaymentScheduleAdvanceFinalApproval{ get; set; }
+
 
         public Bid bid { get; set; }
     }
