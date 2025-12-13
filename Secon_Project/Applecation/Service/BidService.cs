@@ -123,7 +123,35 @@ namespace Applecation.Service
             await unitOfWork.SaveChangesAsync();
             return financialProposal;
         }
-        
+        public async Task<Declaretion> declaretion(int bidId) {
+            var bid = await unitOfWork.GetRepository.GetByIdAsync(bidId);
+            var dec=(from d in context.declaretions
+                     where d.bidId == bidId
+                     select d).FirstOrDefault();
+            if (dec != null)
+            { 
+                return dec;
+            }
+
+             var declaration = new Declaretion
+            {
+                bidId = bidId,
+                declarationText =$"We, {bid.CompanyName} , hereby submit this" +
+                $" bid in response to the above-mentioned tender." +
+                $" \r\nWe confirm that: \r\n•" +
+                $" All provided information is accurate and complete." +
+                $" \r\n• We comply with all tender requirements. \r\n•" +
+                $" We understand and accept the terms and conditions " +
+                $"set forth in the tender document. \r\n" +
+                $"Authorized Signatory: ________________________ \r\n" +
+                $"Date: {DateOnly.FromDateTime(DateTime.Now)}" 
+                
+            };
+
+            await unitOfWork.SaveChangesAsync();
+            return declaration;
+
+        }
 
     
     }

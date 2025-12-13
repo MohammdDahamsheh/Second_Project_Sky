@@ -31,6 +31,14 @@ namespace Second_project_Api.Controllers
             return Ok(result);
         }
 
+        [HttpGet("/Bids/Declaration/{bidId}")]
+        public async Task<IActionResult> getDeclaration(int bidId)
+        {
+            var result = await bidService.declaretion(bidId);
+            return Ok(result);
+        }
+
+
 
 
     }

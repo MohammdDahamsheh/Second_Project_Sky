@@ -25,16 +25,8 @@ namespace Domain.Entity.Bids
         //public int bidDocumentId { get; set; }
         public BidDocument bidDocument { get; private set; }
 
-        //public void addBidDocument(BidDocument document) { 
-        //    if (bidDocuments == null)
-        //    {
-        //        bidDocuments = new List<BidDocument>();
-        //    }
 
-        //    bidDocuments.Add(document);
-
-        //}
-
+       public Declaretion  declaretion { get; set; }
         public Bid()
         {
         }

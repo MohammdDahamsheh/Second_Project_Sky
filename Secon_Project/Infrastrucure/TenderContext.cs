@@ -21,6 +21,7 @@ namespace Infrastrucure
         public DbSet <EligibilityCriteria> EligibilityCriterias { get; set; }
         public DbSet<TechnicalProposal>technicalProposals { get; set; }
         public DbSet<FinancialProposal> financialProposals { get; set; }
+        public DbSet<Declaretion> declaretions { get; set; }
 
         public TenderContext(DbContextOptions<TenderContext> options)
             : base(options)
@@ -106,6 +107,10 @@ namespace Infrastrucure
                 .WithOne(pt => pt.bid)
                 .HasForeignKey<Bid>(b => b.paymentTermsId)
                 .OnDelete(DeleteBehavior.NoAction);
+            modelBuilder.Entity<Bid>()
+                .HasOne(b => b.declaretion)
+                .WithOne(d => d.bid)
+                .HasForeignKey<Declaretion>(d => d.bidId);
 
 
 
