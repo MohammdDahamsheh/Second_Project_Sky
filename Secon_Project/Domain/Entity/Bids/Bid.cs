@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Domain.Entity.Evaluation;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -18,6 +19,7 @@ namespace Domain.Entity.Bids
         public Users user { get; set; }
         public string CompanyName { get; set; }
         public string address { get; set; }
+        public decimal totalBidAmount { get; set; }
 
         public PaymentTerms paymentTerms { get; set; }
         public int paymentTermsId { get; set; }
@@ -25,8 +27,8 @@ namespace Domain.Entity.Bids
         //public int bidDocumentId { get; set; }
         public BidDocument bidDocument { get; private set; }
 
-
-       public Declaretion  declaretion { get; set; }
+        public WinBid winBid { get; set; }
+        public Declaretion  declaretion { get; set; }
         public Bid()
         {
         }

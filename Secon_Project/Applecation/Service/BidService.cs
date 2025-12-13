@@ -35,9 +35,11 @@ namespace Applecation.Service
             {
                 PenaltiesForDelays = bid.PenaltiesForDelays,
                 termMethod = bid.termMethod,
+                
                 PaymentScheduleAdvance = bid.PaymentScheduleAdvance,
                 PaymentScheduleUponMilestoneCompletion = bid.PaymentScheduleUponMilestoneCompletion,
-                PaymentScheduleAdvanceFinalApproval = bid.PaymentScheduleAdvanceFinalApproval
+                PaymentScheduleAdvanceFinalApproval = bid.PaymentScheduleAdvanceFinalApproval,
+                
             };
             await unitOfWorkPayment.GetRepository.AddAsync(paymentTerms);
 
@@ -47,7 +49,8 @@ namespace Applecation.Service
                 tenderId = bid.tenderId,
                 CompanyName = bid.CompanyName,
                 address = bid.address,
-                paymentTerms = paymentTerms
+                paymentTerms = paymentTerms,
+                totalBidAmount= bid.totalBidAmount
             };
              var result=await unitOfWork.GetRepository.AddAsync(bidEntity);
 
@@ -153,6 +156,7 @@ namespace Applecation.Service
 
         }
 
-    
+        
+
     }
 }
