@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore;
 using Infrastrucure;
 using Applecation.Repository;
 using Applecation.Service;
+using Applecation.Repository.securityRepo;
+using Domain.DTOs.security;
 namespace Second_project_Api
 {
     public class Program
@@ -26,6 +28,11 @@ namespace Second_project_Api
             //add   unit of work and repository:
             builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
             builder.Services.AddScoped(typeof(IUnitOfWork<>), typeof(UnitOfWork<>));
+
+            //JWT :
+            builder.Services.AddScoped(typeof(IUserRepo), typeof(UserRepo));
+            builder.Services.AddScoped(typeof(JWTSitting));
+
             //add services:
             builder.Services.AddScoped(typeof(TenderService));
             builder.Services.AddScoped(typeof(BidService));
