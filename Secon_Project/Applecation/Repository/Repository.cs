@@ -43,9 +43,9 @@ namespace Applecation.Repository
             return entity;
         }
 
-        public async Task<bool> UpdateAsync(T entity)
+        public  bool UpdateAsync(T entity)
         {
-            await dbSet.AddAsync(entity);
+             dbSet.Update(entity);
             return true;
         }
     }

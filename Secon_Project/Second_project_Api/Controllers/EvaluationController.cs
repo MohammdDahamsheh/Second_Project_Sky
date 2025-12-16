@@ -12,10 +12,10 @@ namespace Second_project_Api.Controllers
         {
             this.evaluationService = evaluationService;
         }
-        [HttpPost("/Evaluation/{bidId}")]
-        public async Task<IActionResult> evaluateBid(int bidId, [FromBody] WinBidDTO evaluationDTO)
+        [HttpPost("/Evaluation/{tenderId}")]
+        public async Task<IActionResult> evaluateBid(int tenderId, [FromBody] WinBidDTO evaluationDTO)
         {
-            var result = await evaluationService.addEvaluationForTender(bidId, evaluationDTO);
+            var result = await evaluationService.addEvaluationForTender(tenderId, evaluationDTO);
             return Ok(result);
         }
         [HttpGet("/Evaluations/TenderBids/{tenderId}")]

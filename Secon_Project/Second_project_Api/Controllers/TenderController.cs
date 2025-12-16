@@ -38,7 +38,7 @@ namespace Second_project_Api.Controllers
             return Ok(result);
         }
         [HttpPut("/Tenders")]
-        public async Task<IActionResult> UpdateTender([FromBody] Tender tender)
+        public async Task<IActionResult> UpdateTender([FromBody] UpdateTenderDTO tender)
         {
             var result = await tenderService.UpdateTender(tender);
             if (result)

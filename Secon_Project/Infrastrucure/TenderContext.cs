@@ -36,7 +36,7 @@ namespace Infrastrucure
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Users>()
-                .HasIndex(u => u.userId)
+                .HasIndex(u => u.email)
                 .IsUnique();
             modelBuilder.Entity<Tender>()
                 .HasOne(t => t.tenderType)

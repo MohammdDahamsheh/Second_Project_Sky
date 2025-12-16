@@ -10,14 +10,13 @@ namespace Domain.DTOs
     {
         public int tenderId { get; set; }
         public string documentPath { get; set; }
-        public string addBy { get; set; }
+        //public string addBy { get; set; }
         public TenderDocumentDTO(
-            string documentPath,
-            string addBy
+            string documentPath
             )
         {
             this.documentPath = documentPath;
-            this.addBy = addBy;
+            //this.addBy = addBy;
         }
     }
 }

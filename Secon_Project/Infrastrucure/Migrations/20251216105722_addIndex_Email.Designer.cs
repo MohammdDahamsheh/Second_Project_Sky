@@ -4,6 +4,7 @@ using Infrastrucure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastrucure.Migrations
 {
     [DbContext(typeof(TenderContext))]
-    partial class TenderContextModelSnapshot : ModelSnapshot
+    [Migration("20251216105722_addIndex_Email")]
+    partial class addIndex_Email
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -59,7 +62,7 @@ namespace Infrastrucure.Migrations
 
                     b.HasIndex("userId");
 
-                    b.ToTable("bids", (string)null);
+                    b.ToTable("bids");
                 });
 
             modelBuilder.Entity("Domain.Entity.Bids.BidDocument", b =>
@@ -96,7 +99,7 @@ namespace Infrastrucure.Migrations
                     b.HasIndex("technicalProposalId")
                         .IsUnique();
 
-                    b.ToTable("bidDocuments", (string)null);
+                    b.ToTable("bidDocuments");
                 });
 
             modelBuilder.Entity("Domain.Entity.Bids.Declaretion", b =>
@@ -119,7 +122,7 @@ namespace Infrastrucure.Migrations
                     b.HasIndex("bidId")
                         .IsUnique();
 
-                    b.ToTable("declaretions", (string)null);
+                    b.ToTable("declaretions");
                 });
 
             modelBuilder.Entity("Domain.Entity.Bids.FinancialProposal", b =>
@@ -150,7 +153,7 @@ namespace Infrastrucure.Migrations
 
                     b.HasIndex("bidDocumentId");
 
-                    b.ToTable("financialProposals", (string)null);
+                    b.ToTable("financialProposals");
                 });
 
             modelBuilder.Entity("Domain.Entity.Bids.PaymentTerms", b =>
@@ -183,7 +186,7 @@ namespace Infrastrucure.Migrations
 
                     b.HasKey("paymentTermsId");
 
-                    b.ToTable("paymentTerms", (string)null);
+                    b.ToTable("paymentTerms");
                 });
 
             modelBuilder.Entity("Domain.Entity.Bids.TechnicalProposal", b =>
@@ -208,7 +211,7 @@ namespace Infrastrucure.Migrations
 
                     b.HasKey("TechnicalProposalId");
 
-                    b.ToTable("technicalProposals", (string)null);
+                    b.ToTable("technicalProposals");
                 });
 
             modelBuilder.Entity("Domain.Entity.EligibilityCriteria", b =>
@@ -230,7 +233,7 @@ namespace Infrastrucure.Migrations
 
                     b.HasIndex("tenderId");
 
-                    b.ToTable("EligibilityCriterias", (string)null);
+                    b.ToTable("EligibilityCriterias");
                 });
 
             modelBuilder.Entity("Domain.Entity.Evaluation.WinBid", b =>
@@ -262,7 +265,7 @@ namespace Infrastrucure.Migrations
                     b.HasIndex("tenderId")
                         .IsUnique();
 
-                    b.ToTable("winBids", (string)null);
+                    b.ToTable("winBids");
                 });
 
             modelBuilder.Entity("Domain.Entity.Roles", b =>
@@ -279,7 +282,7 @@ namespace Infrastrucure.Migrations
 
                     b.HasKey("roleId");
 
-                    b.ToTable("Roles", (string)null);
+                    b.ToTable("Roles");
                 });
 
             modelBuilder.Entity("Domain.Entity.Tender", b =>
@@ -326,7 +329,7 @@ namespace Infrastrucure.Migrations
 
                     b.HasIndex("userId");
 
-                    b.ToTable("tenders", (string)null);
+                    b.ToTable("tenders");
                 });
 
             modelBuilder.Entity("Domain.Entity.TenderCategory", b =>
@@ -343,7 +346,7 @@ namespace Infrastrucure.Migrations
 
                     b.HasKey("tenderCategoryId");
 
-                    b.ToTable("tenderCategories", (string)null);
+                    b.ToTable("tenderCategories");
                 });
 
             modelBuilder.Entity("Domain.Entity.TenderDocument", b =>
@@ -369,7 +372,7 @@ namespace Infrastrucure.Migrations
 
                     b.HasIndex("tenderId");
 
-                    b.ToTable("tenderDocuments", (string)null);
+                    b.ToTable("tenderDocuments");
                 });
 
             modelBuilder.Entity("Domain.Entity.TenderType", b =>
@@ -386,7 +389,7 @@ namespace Infrastrucure.Migrations
 
                     b.HasKey("tenderTypeId");
 
-                    b.ToTable("tenderTypes", (string)null);
+                    b.ToTable("tenderTypes");
                 });
 
             modelBuilder.Entity("Domain.Entity.UserRoles", b =>
@@ -401,7 +404,7 @@ namespace Infrastrucure.Migrations
 
                     b.HasIndex("roleId");
 
-                    b.ToTable("UserRoles", (string)null);
+                    b.ToTable("UserRoles");
                 });
 
             modelBuilder.Entity("Domain.Entity.Users", b =>
@@ -433,7 +436,7 @@ namespace Infrastrucure.Migrations
                     b.HasIndex("email")
                         .IsUnique();
 
-                    b.ToTable("Users", (string)null);
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("Domain.Entity.Bids.Bid", b =>

@@ -3,11 +3,9 @@ using Domain.DTOs;
 using Domain.Entity;
 using Domain.Entity.Bids;
 using Domain.Entity.Evaluation;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Domain.Response;
+using Infrastrucure;
+
 
 namespace Applecation.Service
 {
@@ -16,56 +14,108 @@ namespace Applecation.Service
         private readonly IUnitOfWork<WinBid> evaluationUnitOfWork;
         private readonly IUnitOfWork<Tender> tenderUnitOfWork;
         private readonly IUnitOfWork<Bid> bidUnitOfWork;
-        public EvaluationService(IUnitOfWork<WinBid> evaluationUnitOfWork, IUnitOfWork<Tender> tenderUnitOfWork, IUnitOfWork<Bid> bidUnitOfWork)
+        private readonly IUnitOfWork<WinBid> winBidUnitOfWork;
+        private readonly TenderContext context;
+        public EvaluationService(TenderContext context,IUnitOfWork<WinBid> evaluationUnitOfWork, IUnitOfWork<WinBid> winBidUnitOfWork, IUnitOfWork<Tender> tenderUnitOfWork, IUnitOfWork<Bid> bidUnitOfWork)
         {
             this.evaluationUnitOfWork = evaluationUnitOfWork;
             this.tenderUnitOfWork = tenderUnitOfWork;
             this.bidUnitOfWork = bidUnitOfWork;
+            this.winBidUnitOfWork = winBidUnitOfWork;
+            this.context= context;
         }
-        public async Task<WinBid> addEvaluationForTender(int tenderId, WinBidDTO winBidDTO) { 
+        public async Task<WinBidResponse> addEvaluationForTender(int tenderId, WinBidDTO winBidDTO) { 
             var tender= await tenderUnitOfWork.GetRepository.GetByIdAsync(tenderId);
             var bid= await bidUnitOfWork.GetRepository.GetByIdAsync(winBidDTO.bidId);
+            var winBid =  (from w in context.winBids
+                                where w.tenderId == tenderId 
+                                select w
+                                ).FirstOrDefault();
+            if (winBid != null) {
+                throw new Exception("The tender was Evaluation in last time .....");
+            }
 
-            var result= new WinBid
+            var winbid= new WinBid
             {
                 tenderId=tenderId,
                 bidId=winBidDTO.bidId,
                 awardedDate=DateOnly.FromDateTime(DateTime.Now),
                 comments=winBidDTO.comments
             };
-            await evaluationUnitOfWork.GetRepository.AddAsync(result);
+            await evaluationUnitOfWork.GetRepository.AddAsync(winbid);
             await evaluationUnitOfWork.SaveChangesAsync();
 
+            var result = new WinBidResponse
+            {
+                winBidId = winbid.winBidId,
+                tenderId = tenderId,
+                bidId = winbid.bidId,
+                comments = winbid.comments,
+                awardedDate = winbid.awardedDate
+            };
 
             return result;
 
         }
 
-        public async Task<IEnumerable<Bid>> getBidsByTenderId(int tenderId)
+        public async Task<IEnumerable<BidResponse>> getBidsByTenderId(int tenderId)
         {
             var tender = await tenderUnitOfWork.GetRepository.GetByIdAsync(tenderId);
-            if (tender == null)
-            {
-                throw new Exception("Tender not found");
-            }
 
-            var bids = (from b in bidUnitOfWork.GetRepository.GetAllAsync().Result
-                        where b.tenderId == tenderId
-                        select b).ToList();
-            return bids;
-        }
-        public async Task<IEnumerable<Bid>> getBidsDecresingPrice(int tenderId)
-        {
-            var tender = await tenderUnitOfWork.GetRepository.GetByIdAsync(tenderId);
-            var bids = (from b in bidUnitOfWork.GetRepository.GetAllAsync().Result
-                        where b.tenderId == tenderId
-                        orderby b.totalBidAmount ascending
-                        select b).ToList();
-            if (bids == null || bids.Count == 0)
-            {
-                throw new Exception("No bids found for this tender");
+            var bids= await bidUnitOfWork.GetRepository.GetAllAsync();
+            if (bids == null || bids.Count() == 0) {
+                throw new Exception("There are no bids for this tender.....");
             }
-            return bids;
+           
+
+            var result = (from b in context.bids
+                          join u in context.Users
+                          on b.userId equals u.userId
+                          join p in context.paymentTerms 
+                          on b.paymentTermsId equals p.paymentTermsId
+                          where b.tenderId == tenderId
+                          select new BidResponse { 
+                            tenderId = b.tenderId,
+                            bidId = b.bidId,
+                            username=u.userName,
+                            CompanyName=b.CompanyName,
+                            address=b.address,
+                            totalBidAmount=b.totalBidAmount,
+                            termMethod=p.termMethod,
+                            PaymentScheduleAdvance=p.PaymentScheduleAdvance,
+                            PaymentScheduleAdvanceFinalApproval=p.PaymentScheduleAdvanceFinalApproval,
+                            PaymentScheduleUponMilestoneCompletion = p.PaymentScheduleUponMilestoneCompletion,
+                            PenaltiesForDelays = p.PenaltiesForDelays
+                           }).ToList();
+            return result;
+        }
+        public async Task<IEnumerable<BidResponse>> getBidsDecresingPrice(int tenderId)
+        {
+            //check the tender and the bids : 
+            var tender = await tenderUnitOfWork.GetRepository.GetByIdAsync(tenderId);
+            var bids=await bidUnitOfWork.GetRepository.GetAllAsync();
+            var result = (from b in context.bids
+                          join u in context.Users
+                          on b.userId equals u.userId
+                          join p in context.paymentTerms
+                          on b.paymentTermsId equals p.paymentTermsId
+                          where b.tenderId == tenderId
+                          orderby b.totalBidAmount ascending
+                          select new BidResponse
+                          {
+                              tenderId = b.tenderId,
+                              bidId = b.bidId,
+                              username = u.userName,
+                              CompanyName = b.CompanyName,
+                              address = b.address,
+                              totalBidAmount = b.totalBidAmount,
+                              termMethod = p.termMethod,
+                              PaymentScheduleAdvance = p.PaymentScheduleAdvance,
+                              PaymentScheduleAdvanceFinalApproval = p.PaymentScheduleAdvanceFinalApproval,
+                              PaymentScheduleUponMilestoneCompletion = p.PaymentScheduleUponMilestoneCompletion,
+                              PenaltiesForDelays = p.PenaltiesForDelays
+                          }).ToList();
+            return result;
 
 
         }

@@ -2,6 +2,7 @@
 using Domain.DTOs;
 using Domain.Entity;
 using Domain.Entity.Bids;
+using Domain.Response;
 using Infrastrucure;
 
 namespace Applecation.Service
@@ -28,8 +29,9 @@ namespace Applecation.Service
             this.unitOfWorkTechnicalProposal = unitOfWorkTechnicalProposal;
         }
 
-        public async Task<Bid> addBid(BidDTO bid)
+        public async Task<BidResponse> addBid(BidDTO bid)
         {
+            // Check if the tender exists
             var tender = await unitOfWorkTender.GetRepository.GetByIdAsync(bid.tenderId);
             var paymentTerms = new PaymentTerms
             {
@@ -51,26 +53,43 @@ namespace Applecation.Service
                 address = bid.address,
                 paymentTerms = paymentTerms,
                 totalBidAmount= bid.totalBidAmount
+                //userId= 1 
             };
-             var result=await unitOfWork.GetRepository.AddAsync(bidEntity);
+             await unitOfWork.GetRepository.AddAsync(bidEntity);
 
             await unitOfWork.SaveChangesAsync();
+            var username =  (from u in context.Users where u.userId == bidEntity.userId select u.userName).First();
+            var result = new BidResponse
+            {
+
+                bidId = bidEntity.bidId,
+                tenderId = bidEntity.tenderId,
+                CompanyName = bidEntity.CompanyName,
+                address = bidEntity.address,
+                totalBidAmount = bidEntity.totalBidAmount,
+                termMethod = paymentTerms.termMethod,
+                PenaltiesForDelays = paymentTerms.PenaltiesForDelays,
+                PaymentScheduleAdvance = paymentTerms.PaymentScheduleAdvance,
+                PaymentScheduleUponMilestoneCompletion = paymentTerms.PaymentScheduleUponMilestoneCompletion,
+                PaymentScheduleAdvanceFinalApproval = paymentTerms.PaymentScheduleAdvanceFinalApproval,
+                username= username
+            };
 
 
-            return bidEntity;
+                return result;
         }
 
-        public async Task<BidDocument> addDocument(BidDocumentDTO bidDocumentDTO)
+        public async Task<BidDocumentResponse> addDocument(BidDocumentDTO bidDocumentDTO)
         {
             var bid = await unitOfWork.GetRepository.GetByIdAsync(bidDocumentDTO.bidId);
             
             var bidDoc = (from bd in context.bidDocuments
                             where bd.bidId == bidDocumentDTO.bidId
-                            select bd);
+                            select bd).FirstOrDefault();
             if (bidDoc != null) {
 
                 var tp= (from t in context.technicalProposals
-                          where t.TechnicalProposalId == bidDoc.First().technicalProposalId
+                          where t.TechnicalProposalId == bidDoc.technicalProposalId
                          select t).First();
                 
                 tp.technicalApproachDescription = bidDocumentDTO.technicalApproachDescription;
@@ -78,11 +97,20 @@ namespace Applecation.Service
                 tp.proposedSolution = bidDocumentDTO.proposedSolution;
 
 
-                bidDoc.First().companyRegistrationCertificate = bidDocumentDTO.companyRegistrationCertificate;
-                bidDoc.First().taxComplianceCertificate = bidDocumentDTO.taxComplianceCertificate;
-                bidDoc.First().financialStatementsLast_2Years = bidDocumentDTO.financialStatementsLast_2Years;
+                bidDoc.companyRegistrationCertificate = bidDocumentDTO.companyRegistrationCertificate;
+                bidDoc.taxComplianceCertificate = bidDocumentDTO.taxComplianceCertificate;
+                bidDoc.financialStatementsLast_2Years = bidDocumentDTO.financialStatementsLast_2Years;
                 await unitOfWork.SaveChangesAsync();
-                return bidDoc.First();
+                var bidDocResponse = new BidDocumentResponse
+                {
+                    bidDocumentId = bidDoc.bidDocumentId,
+                    bidId = bidDoc.bidId,
+                    technicalProposalId = bidDoc.technicalProposalId,
+                    companyRegistrationCertificate = bidDoc.companyRegistrationCertificate,
+                    taxComplianceCertificate = bidDoc.taxComplianceCertificate,
+                    financialStatementsLast_2Years = bidDoc.financialStatementsLast_2Years
+                };
+                return bidDocResponse;
 
 
             }
@@ -100,17 +128,26 @@ namespace Applecation.Service
                     companyRegistrationCertificate = bidDocumentDTO.companyRegistrationCertificate,
                     taxComplianceCertificate = bidDocumentDTO.taxComplianceCertificate,
                     financialStatementsLast_2Years = bidDocumentDTO.financialStatementsLast_2Years,
-                    technicalProposalId = technicalProposal.TechnicalProposalId
+                    technicalProposal = technicalProposal
                 };
-                context.bidDocuments.Add(bidDocument);
+                await unitOfWorkBidDocument.GetRepository.AddAsync(bidDocument);
                 await unitOfWork.SaveChangesAsync();
-                return bidDocument;
+                var bidDocResponse = new BidDocumentResponse
+                {
+                    bidDocumentId = bidDocument.bidDocumentId,
+                    bidId = bidDocument.bidId,
+                    technicalProposalId = bidDocument.technicalProposalId,
+                    companyRegistrationCertificate = bidDocument.companyRegistrationCertificate,
+                    taxComplianceCertificate = bidDocument.taxComplianceCertificate,
+                    financialStatementsLast_2Years = bidDocument.financialStatementsLast_2Years
+                };
+                return bidDocResponse;
             }
 
             
 
         }
-        public async Task <FinancialProposal>addFinancialProposal(FinancialProposalDTO financialProposalDTO)
+        public async Task <FinancialProposalResponse>addFinancialProposal(FinancialProposalDTO financialProposalDTO)
         {
             var bidDocument = await unitOfWorkBidDocument.GetRepository.GetByIdAsync(financialProposalDTO.bidDocumentId);
 
@@ -122,19 +159,33 @@ namespace Applecation.Service
                 unitPrice = financialProposalDTO.unitPrice,
                 totalPrice = financialProposalDTO.unitPrice * financialProposalDTO.quantity
             };
+            
             await unitOfWorkFinancialProposal.GetRepository.AddAsync(financialProposal);
             await unitOfWork.SaveChangesAsync();
-            return financialProposal;
+            var response = new FinancialProposalResponse
+            {
+                FinancialProposalId = financialProposal.financialProposalId,
+
+                itemDescription = financialProposal.itemDescription,
+                quantity = financialProposal.quantity,
+                unitPrice = financialProposal.unitPrice,
+                total = financialProposal.totalPrice,
+                bidDocumentId = financialProposal.bidDocumentId
+
+            };
+            return response;
         }
-        public async Task<Declaretion> declaretion(int bidId) {
+        public async Task<string> declaretion(int bidId) {
+            //check is the bid is found:
             var bid = await unitOfWork.GetRepository.GetByIdAsync(bidId);
             var dec=(from d in context.declaretions
                      where d.bidId == bidId
                      select d).FirstOrDefault();
             if (dec != null)
             { 
-                return dec;
+                return dec.declarationText;
             }
+            var username = (from u in context.Users where u.userId==bid.userId select u.userName).First();
 
              var declaration = new Declaretion
             {
@@ -146,13 +197,13 @@ namespace Applecation.Service
                 $" \r\n• We comply with all tender requirements. \r\n•" +
                 $" We understand and accept the terms and conditions " +
                 $"set forth in the tender document. \r\n" +
-                $"Authorized Signatory: ________________________ \r\n" +
+                $"Authorized Signatory: {username} \r\n" +
                 $"Date: {DateOnly.FromDateTime(DateTime.Now)}" 
                 
             };
-
+           await context.declaretions.AddAsync(declaration);
             await unitOfWork.SaveChangesAsync();
-            return declaration;
+            return declaration.declarationText;
 
         }
 

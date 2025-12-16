@@ -1,6 +1,7 @@
 ﻿using Applecation.Repository;
 using Domain.DTOs;
 using Domain.Entity;
+using Domain.Response;
 using Infrastrucure;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,18 +13,87 @@ namespace Applecation.Service
         private readonly TenderContext context;
 
         private readonly IUnitOfWork<Tender> tenderUnitOfWork;
-        public TenderService(IUnitOfWork<Tender> tenderUnitOfWork,TenderContext context) 
+        private readonly IUnitOfWork<Users> userUnitOfWork;
+        private readonly IUnitOfWork<TenderType> typeUnitOfWork;
+        private readonly IUnitOfWork<TenderCategory> categoryUnitOfWork;
+
+        public TenderService(IUnitOfWork<Tender> tenderUnitOfWork,TenderContext context, IUnitOfWork<Users> userUnitOfWork) 
         { this.tenderUnitOfWork = tenderUnitOfWork;
             this.context = context;
+            this.userUnitOfWork = userUnitOfWork;
         }
-        public async Task<IEnumerable<Tender>> GetAllTenders()
+        public async Task<IEnumerable<TenderResponse>> GetAllTenders()
         {
-            return await tenderUnitOfWork.GetRepository.GetAllAsync();
+            //To check if tenders exist:
+            var tenders = await tenderUnitOfWork.GetRepository.GetAllAsync();
+
+            var result = new List<TenderResponse>();
+            foreach (var tenderResponse in tenders) { 
+                var tender = await (from u in context.Users
+                                    join t in context.tenders
+                                    on u.userId equals tenderResponse.userId
+                                    join tt in context.tenderTypes
+                                    on tenderResponse.tenderTypeId equals tt.tenderTypeId
+                                    join tc in context.tenderCategories
+                                    on tenderResponse.tenderCategoryId equals tc.tenderCategoryId
+                                    where tenderResponse.tenderId == t.tenderId
+                                    select new TenderResponse
+                                    {
+                                        tenderId = t.tenderId,
+                                        tenderTitle = t.tenderTitle,
+                                        tenderDescription = t.tenderDescription,
+                                        username = u.userName,
+                                        issueDate = t.issueDate,
+                                        closingDate = t.closingDate,
+                                        budget = t.budget,
+                                        tenderType = tt.typeName,
+                                        tenderCategory = tc.categoryName
+                                    }).FirstAsync();
+                result.Add(tender);
+
+            }
+
+
+
+
+            return result;
         }
-        public async Task<Tender> GetTenderById(int id)
+        public async Task<TenderResponse> GetTenderById(int id)
         {
-            
-            return await tenderUnitOfWork.GetRepository.GetByIdAsync(id);
+            //To check if tender exists:
+            var tender = await tenderUnitOfWork.GetRepository.GetByIdAsync(id);
+          
+
+            var result = await (from u in context.Users
+                                join t in context.tenders
+                                on u.userId equals t.userId
+                                join tt in context.tenderTypes
+                                on t.tenderTypeId equals tt.tenderTypeId
+                                join tc in context.tenderCategories
+                                on t.tenderCategoryId equals tc.tenderCategoryId
+                                where t.tenderId == id
+                                select new TenderResponse
+                                {
+                                    tenderId = t.tenderId,
+                                    tenderTitle = t.tenderTitle,
+                                    tenderDescription = t.tenderDescription,
+                                    username = u.userName,
+                                    issueDate = t.issueDate,
+                                    closingDate = t.closingDate,
+                                    budget = t.budget,
+                                    tenderType = tt.typeName,
+                                    tenderCategory = tc.categoryName
+
+                                }).FirstOrDefaultAsync();
+            if(result == null) 
+            {
+                throw new Exception("Tender not found");
+            }
+
+          
+
+
+            return result;
         }
         public async Task<bool> AddTender(TenderDTO tender)
         {
@@ -36,6 +106,7 @@ namespace Applecation.Service
                 tenderDescription = tender.tenderDescription,
                 issueDate = DateOnly.FromDateTime(DateTime.Now),
                 budget = tender.budget
+                //userId = 1 
 
             };
             var result = await tenderUnitOfWork.GetRepository.AddAsync(tenderEntity);
@@ -46,14 +117,18 @@ namespace Applecation.Service
             }
             return false;
         }
-        public async Task<bool> UpdateTender(Tender tender)
+        public async Task<bool> UpdateTender(UpdateTenderDTO tender)
         {
             var existingTender = await tenderUnitOfWork.GetRepository.GetByIdAsync(tender.tenderId);
-            if (existingTender == null)
-            {
-                throw new Exception("Tender not found");
-            }
-            var result = await tenderUnitOfWork.GetRepository.UpdateAsync(tender);
+
+            existingTender.tenderCategoryId = tender.tenderCategoryId;
+            existingTender.tenderTypeId = tender.tenderTypeId;
+            existingTender.closingDate = tender.closingDate;
+            existingTender.tenderTitle = tender.tenderTitle;
+            existingTender.tenderDescription = tender.tenderDescription;
+            existingTender.budget = tender.budget;
+
+            var result =  tenderUnitOfWork.GetRepository.UpdateAsync(existingTender);
             if (result)
             {
                 await tenderUnitOfWork.SaveChangesAsync();
@@ -61,17 +136,17 @@ namespace Applecation.Service
             }
             return false;
         }
-
         public async Task<bool> addTenderDocument(TenderDocumentDTO tenderDocumentDTO) {
            
             var tender=await tenderUnitOfWork.GetRepository.GetByIdAsync(tenderDocumentDTO.tenderId);
-            if(tender == null) {
-                throw new Exception("Tender not found");
-            }
+            var username = (from u in userUnitOfWork.GetRepository.GetAllAsync().Result
+                            where u.userId == tender.userId
+                            select u.userName).FirstOrDefault();
+                            
             var tenderDocument = new TenderDocument(
                 tenderDocumentDTO.tenderId,
                 tenderDocumentDTO.documentPath,
-                tenderDocumentDTO.addBy
+                username!
                 );
             tender.AddTenderDocument(tenderDocument);
             await tenderUnitOfWork.SaveChangesAsync();
@@ -116,9 +191,7 @@ namespace Applecation.Service
         public async Task<EligibilityCriteriaDTO> AddEligibilityCriteria(EligibilityCriteriaDTO eligibilityCriteriaDTO) {
               
             var tender = await tenderUnitOfWork.GetRepository.GetByIdAsync(eligibilityCriteriaDTO.tenderId);
-            if (tender == null) {
-                throw new Exception("Tender not found");
-            }
+            
             var eligibilityCriteria = new EligibilityCriteria
             (
                  eligibilityCriteriaDTO.CriteriaDescription,
@@ -130,11 +203,15 @@ namespace Applecation.Service
             return eligibilityCriteriaDTO;
         }
 
-        public async Task<IEnumerable<EligibilityCriteria>> getEligibilityCriterias(int tenderId)
+        public async Task<IEnumerable<EligibilityCriteriaResponse>> getEligibilityCriterias(int tenderId)
         {
             var eligibilityCriterias = await(from ec in context.EligibilityCriterias
                                              where ec.tenderId == tenderId
-                                             select ec
+                                             select new EligibilityCriteriaResponse
+                                             {
+                                                 EligibilityCriteriaId = ec.EligibilityCriteriaId,
+                                                 CriteriaDescription = ec.CriteriaDescription
+                                             }
                                              ).ToListAsync();
             if (eligibilityCriterias == null || eligibilityCriterias.Count == 0) { 
             throw new Exception("No eligibility criteria found for this tender");
