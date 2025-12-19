@@ -5,6 +5,7 @@ using Domain.Entity.Bids;
 using Domain.Entity.Evaluation;
 using Domain.Response;
 using Infrastrucure;
+using Microsoft.EntityFrameworkCore;
 
 
 namespace Applecation.Service
@@ -15,6 +16,8 @@ namespace Applecation.Service
         private readonly IUnitOfWork<Tender> tenderUnitOfWork;
         private readonly IUnitOfWork<Bid> bidUnitOfWork;
         private readonly IUnitOfWork<WinBid> winBidUnitOfWork;
+        private readonly IUnitOfWork<BidDocument> DocBidUnitOfWork;
+
         private readonly TenderContext context;
         public EvaluationService(TenderContext context,IUnitOfWork<WinBid> evaluationUnitOfWork, IUnitOfWork<WinBid> winBidUnitOfWork, IUnitOfWork<Tender> tenderUnitOfWork, IUnitOfWork<Bid> bidUnitOfWork)
         {
@@ -120,7 +123,37 @@ namespace Applecation.Service
 
         }
 
+        public async Task<IEnumerable<BidDocumentResponse>> getBidDoc(int bidId) {
+            var bid =await bidUnitOfWork.GetRepository.GetByIdAsync(bidId);
 
+            var result = await (from bd in context.bidDocuments
+                                where bd.bidId==bidId
+                                select new BidDocumentResponse { 
+                                    bidDocumentId = bd.bidDocumentId,
+                                    taxComplianceCertificate = bd.taxComplianceCertificate,
+                                    companyRegistrationCertificate = bd.companyRegistrationCertificate,
+                                    technicalProposalId = bd.technicalProposalId,
+                                    financialStatementsLast_2Years=bd.financialStatementsLast_2Years
+                                }
+                                ).ToListAsync();
+            return result;
+        }
 
+        public async Task<IEnumerable<FinancialProposalResponse>> GetFinancialProposalResponses(int bidId) {
+            var bid=await bidUnitOfWork.GetRepository.GetByIdAsync(bidId);
+            var result = await (from fp in context.financialProposals
+                                join c in context.bidDocuments
+                                on fp.bidDocumentId equals c.bidDocumentId
+                                where c.bidId==bidId
+                                select new FinancialProposalResponse { 
+                                    FinancialProposalId = fp.financialProposalId,
+                                    itemDescription = fp.itemDescription,
+                                    quantity = fp.quantity,
+                                    total=fp.totalPrice,
+                                    unitPrice=fp.unitPrice
+                                }
+                                ).ToListAsync();
+            return result;
+        }
     }
 }

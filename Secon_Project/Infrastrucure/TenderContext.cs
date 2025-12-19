@@ -17,6 +17,7 @@ namespace Infrastrucure
         public DbSet<TenderCategory> tenderCategories { get; set; }
         public DbSet<TenderDocument> tenderDocuments { get; set; }
         public DbSet<Roles> Roles { get; set; }
+        public DbSet<UserRoles> UserRoles { get; set; }
         public DbSet<PaymentTerms> paymentTerms { get; set; }
         public DbSet <Bid> bids { get; set; }
         public DbSet <BidDocument> bidDocuments { get; set; }

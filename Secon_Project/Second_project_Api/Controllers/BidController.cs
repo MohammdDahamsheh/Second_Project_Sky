@@ -1,9 +1,14 @@
 ﻿using Applecation.Service;
 using Domain.DTOs;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace Second_project_Api.Controllers
 {
+    [ApiController]
+    [Route("api/[controller]")]
+    [Authorize(Roles = "BID")]
     public class BidController : ControllerBase
     {
         private readonly BidService bidService;
@@ -15,7 +20,7 @@ namespace Second_project_Api.Controllers
         [HttpPost("/Bids")]
         public async Task<IActionResult> AddBid([FromBody] BidDTO bid)
         {
-            var result = await bidService.addBid(bid);
+            var result = await bidService.addBid(bid,int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!));
             return Ok(result);
         }
         [HttpPost("/Bids/Documents")]

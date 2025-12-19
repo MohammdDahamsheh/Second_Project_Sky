@@ -7,5 +7,7 @@ namespace Applecation.Repository.securityRepo
     {
         Task<Users> getUserByEmail(string email);
         Task<Users>addUserAsync(Users user);
+        Task<Users>getByEmailAndRoleAsync(string email);
+        Task AddUserRoles(UserRoles userRole);
     }
 }

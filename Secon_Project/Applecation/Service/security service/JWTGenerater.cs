@@ -1,40 +1,53 @@
 ﻿using Domain.DTOs.security;
 using Domain.Entity;
+using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
-using System;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Security.Claims;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Applecation.Service.security_service
 {
     public class JWTGenerater
     {
-        private readonly JWTSitting jWTSitting;
+        //private readonly JWTSitting jWTSitting;
+        private readonly IConfiguration configuration;
 
-        public JWTGenerater(JWTSitting jWTSitting)
+        public JWTGenerater(IConfiguration configuration)
         {
-            this.jWTSitting = jWTSitting;
+            this.configuration = configuration;
+
         }
 
         public JWTResponse generateToken(Users user)
         {
+            var jwt = configuration.GetSection("Jwt");
 
             var claims = new List<Claim> {
                 new Claim(JwtRegisteredClaimNames.Sub,user.userId.ToString()),
                 new Claim(JwtRegisteredClaimNames.Email,user.email),
-                new Claim("username",user.userName)
+                new Claim("username",user.userName),
+                new Claim(ClaimTypes.Email, user.email),
+                new Claim(ClaimTypes.NameIdentifier, user.userId.ToString()),
+
+
             };
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jWTSitting.key));
+            if (user.userRoles != null)
+            {
+                foreach (var ur in user.userRoles)
+                {
+                    // assumes ur.role.roleName exists
+                    if (ur.role != null)
+                        claims.Add(new Claim(ClaimTypes.Role, ur.role.roleName));
+                }
+            }
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwt["Key"]!));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-            var expier = DateTime.UtcNow.AddMinutes(jWTSitting.expMinutes);
+            var expier = DateTime.UtcNow.AddMinutes(int.Parse(jwt["ExpMinutes"]!));
 
             var token = new JwtSecurityToken(
-                issuer: jWTSitting.issuer,
-                audience: jWTSitting.audience,
+                issuer: jwt["Issuer"],
+                audience: jwt["Aduience"],
                 claims: claims,
                 expires: expier,
                 signingCredentials: creds
