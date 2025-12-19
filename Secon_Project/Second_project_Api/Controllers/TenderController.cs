@@ -1,12 +1,15 @@
 ﻿using Applecation.Service;
 using Domain.DTOs;
 using Domain.Entity;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace Second_project_Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize(Roles = "TENDER")]
     public class TenderController : ControllerBase
     {
         private readonly TenderService tenderService;
@@ -18,7 +21,7 @@ namespace Second_project_Api.Controllers
         [HttpPost("/Tenders")]
         public async Task<IActionResult> AddTender([FromBody] TenderDTO tender)
         {
-            var result = await tenderService.AddTender(tender);
+            var result = await tenderService.AddTender(tender,int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!));
             if (result)
             {
                 return Ok("Tender added successfully");
@@ -75,5 +78,18 @@ namespace Second_project_Api.Controllers
             var tender = await tenderService.GetTenderById(id);
             return Ok(tender);
         }
+
+
+        [HttpGet("/Documents/{tenderId}")]
+        public async Task<IActionResult> getTenderDocs(int tenderId) { 
+        
+            var result= await tenderService.getTenderDoc(tenderId);
+            return Ok(result);
+        }
+    
+    
+    
     }
+
+    
 }

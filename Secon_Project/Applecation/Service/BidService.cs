@@ -29,7 +29,7 @@ namespace Applecation.Service
             this.unitOfWorkTechnicalProposal = unitOfWorkTechnicalProposal;
         }
 
-        public async Task<BidResponse> addBid(BidDTO bid)
+        public async Task<BidResponse> addBid(BidDTO bid, int userId)
         {
             // Check if the tender exists
             var tender = await unitOfWorkTender.GetRepository.GetByIdAsync(bid.tenderId);
@@ -52,7 +52,9 @@ namespace Applecation.Service
                 CompanyName = bid.CompanyName,
                 address = bid.address,
                 paymentTerms = paymentTerms,
-                totalBidAmount= bid.totalBidAmount
+                totalBidAmount= bid.totalBidAmount,
+                userId= userId
+
                 //userId= 1 
             };
              await unitOfWork.GetRepository.AddAsync(bidEntity);

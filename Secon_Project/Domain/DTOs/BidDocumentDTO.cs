@@ -20,10 +20,7 @@ namespace Domain.DTOs
         public string methodologyDescription { get; set; }
         public string proposedSolution { get; set; }
 
-        //financial proposal details
-        public string itemDescription { get; set; }
-        public int quantity { get; set; }
-        public decimal unitPrice { get; set; }
+       
 
 
     }

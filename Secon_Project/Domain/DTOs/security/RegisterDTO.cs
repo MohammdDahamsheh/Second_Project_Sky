@@ -12,6 +12,7 @@ namespace Domain.DTOs.security
         public string password { get; set; }
         public string email { get; set; }
         public string phoneNumber { get; set; }
+        public int roleId { get; set; }
 
         public RegisterDTO() { }
     }

@@ -95,7 +95,7 @@ namespace Applecation.Service
 
             return result;
         }
-        public async Task<bool> AddTender(TenderDTO tender)
+        public async Task<bool> AddTender(TenderDTO tender,int userId)
         {
             var tenderEntity = new Tender
             {
@@ -105,8 +105,10 @@ namespace Applecation.Service
                 tenderTitle = tender.tenderTitle,
                 tenderDescription = tender.tenderDescription,
                 issueDate = DateOnly.FromDateTime(DateTime.Now),
-                budget = tender.budget
-                //userId = 1 
+                budget = tender.budget,
+                //userId = 1 ,
+                userId = userId
+
 
             };
             var result = await tenderUnitOfWork.GetRepository.AddAsync(tenderEntity);
@@ -220,5 +222,20 @@ namespace Applecation.Service
             return eligibilityCriterias;
 
         }
+
+        public async Task<IEnumerable<TenderDocListResponse>> getTenderDoc(int tenderId) { 
+            //check the tender
+            var tender=await tenderUnitOfWork.GetRepository.GetByIdAsync(tenderId);
+            var result = await (from td in context.tenderDocuments
+                                where td.tenderId == tenderId
+                                select new TenderDocListResponse { 
+                                tenderDocumentId = td.tenderDocumentId,
+                                addBy=td.addBy,
+                                documentPath=td.documentPath
+                                }
+                                ).ToListAsync();
+            return result;
+        }
+    
     }
 }

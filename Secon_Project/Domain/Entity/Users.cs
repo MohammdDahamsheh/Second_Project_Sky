@@ -13,7 +13,7 @@ namespace Domain.Entity
         [Key]
         public int userId { get; private set; }
         public string userName { get; private set; }
-        public string userPassword { get; private set; }
+        public string userPassword { get;  set; }
         public string email { get; set; }
         public string phoneNumber { get; set; }
 
