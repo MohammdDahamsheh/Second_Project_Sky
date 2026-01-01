@@ -44,6 +44,18 @@ namespace Infrastrucure
                 .WithMany(tt => tt.tender)
                 .HasForeignKey(t => t.tenderTypeId);
 
+            //Add the indexes
+
+
+            modelBuilder.Entity<TenderType>()
+                .HasIndex(x => x.typeName).IsUnique();
+
+            modelBuilder.Entity<TenderCategory>()
+                .HasIndex(x => x.categoryName).IsUnique();
+
+            modelBuilder.Entity<Roles>()
+                .HasIndex(x => x.roleName).IsUnique();
+
 
 
             modelBuilder.Entity<Tender>()
