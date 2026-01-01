@@ -1,5 +1,5 @@
 ﻿using Applecation.Service.security_service;
-using Domain.DTOs.security;
+using Applecation.DTOs.security;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Second_project_Api.Controllers

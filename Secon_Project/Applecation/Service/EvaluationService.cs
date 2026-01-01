@@ -1,9 +1,9 @@
 ﻿using Applecation.Repository;
-using Domain.DTOs;
+using Applecation.DTOs;
 using Domain.Entity;
 using Domain.Entity.Bids;
 using Domain.Entity.Evaluation;
-using Domain.Response;
+using Applecation.Response;
 using Infrastrucure;
 using Microsoft.EntityFrameworkCore;
 
@@ -37,8 +37,10 @@ namespace Applecation.Service
             if (winBid != null) {
                 throw new Exception("The tender was Evaluation in last time .....");
             }
+            if (tender.closingDate > DateOnly.FromDateTime(DateTime.Now)) 
+                throw new Exception("The Tender not close yet, it will close in "+tender.closingDate);
 
-            var winbid= new WinBid
+                var winbid= new WinBid
             {
                 tenderId=tenderId,
                 bidId=winBidDTO.bidId,

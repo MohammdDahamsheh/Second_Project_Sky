@@ -12,7 +12,7 @@ namespace Domain.Entity
         [Key]
         public int tenderCategoryId { get; set; }
         public string categoryName { get; set; }
-        public Tender tender { get; set; }
+        public ICollection<Tender> tender { get; set; }
         public TenderCategory(string categoryName)
         {
             this.categoryName = categoryName;

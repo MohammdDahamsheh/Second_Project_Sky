@@ -1,4 +1,4 @@
-﻿using Domain.DTOs.security;
+﻿using Applecation.DTOs.security;
 using Domain.Entity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Domain.Response
+namespace Applecation.Response
 {
     public class EligibilityCriteriaResponse
     {

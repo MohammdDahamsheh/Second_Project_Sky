@@ -2,7 +2,7 @@
 
 using Domain.Entity;
 
-namespace Domain.DTOs
+namespace Applecation.DTOs
 {
     public class TendersOpenDTO
     {

@@ -5,7 +5,7 @@
 using Domain.Entity;
 using Domain.Entity.Bids;
 using System.Reflection.Emit;
-using Domain.DTOs;
+
 using Domain.Entity.Evaluation;
 namespace Infrastrucure
 {
@@ -41,15 +41,15 @@ namespace Infrastrucure
                 .IsUnique();
             modelBuilder.Entity<Tender>()
                 .HasOne(t => t.tenderType)
-                .WithOne(tt => tt.tender)
-                .HasForeignKey<Tender>(t => t.tenderTypeId);
+                .WithMany(tt => tt.tender)
+                .HasForeignKey(t => t.tenderTypeId);
 
 
 
             modelBuilder.Entity<Tender>()
                 .HasOne(t => t.tenderCategory)
-                .WithOne(tc => tc.tender)
-                .HasForeignKey<Tender>(t => t.tenderCategoryId);
+                .WithMany(tc => tc.tender)
+                .HasForeignKey(t => t.tenderCategoryId);
 
             modelBuilder.Entity<TenderDocument>()
                 .HasOne(td => td.tender)
