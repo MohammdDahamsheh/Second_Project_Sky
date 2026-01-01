@@ -1,5 +1,5 @@
 ﻿using Applecation.Repository.securityRepo;
-using Domain.DTOs.security;
+using Applecation.DTOs.security;
 using Domain.Entity;
 using Infrastrucure;
 using Microsoft.EntityFrameworkCore;

@@ -4,15 +4,18 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Domain.DTOs
+namespace Applecation.Response
 {
-    public class FinancialProposalDTO
+    public class FinancialProposalResponse
     {
-        public FinancialProposalDTO() { }
-        
+        public FinancialProposalResponse()
+        {
+        }
+        public int FinancialProposalId { get; set; }
         public string itemDescription { get; set; }
         public int quantity { get; set; }
         public decimal unitPrice { get; set; }
+        public decimal total { get; set; }
         public int bidDocumentId { get; set; }
 
     }

@@ -3,7 +3,7 @@ using Applecation.Repository;
 using Applecation.Repository.securityRepo;
 using Applecation.Service;
 using Applecation.Service.security_service;
-using Domain.DTOs.security;
+using Applecation.DTOs.security;
 using Infrastrucure;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;

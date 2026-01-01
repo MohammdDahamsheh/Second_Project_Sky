@@ -1,8 +1,8 @@
 ﻿using Applecation.Repository;
-using Domain.DTOs;
+using Applecation.DTOs;
 using Domain.Entity;
 using Domain.Entity.Bids;
-using Domain.Response;
+using Applecation.Response;
 using Infrastrucure;
 
 namespace Applecation.Service

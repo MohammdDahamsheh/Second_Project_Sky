@@ -1,7 +1,7 @@
 ﻿using Applecation.Repository;
-using Domain.DTOs;
+using Applecation.DTOs;
 using Domain.Entity;
-using Domain.Response;
+using Applecation.Response;
 using Infrastrucure;
 using Microsoft.EntityFrameworkCore;
 
