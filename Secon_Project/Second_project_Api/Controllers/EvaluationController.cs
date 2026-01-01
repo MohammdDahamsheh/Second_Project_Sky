@@ -16,32 +16,32 @@ namespace Second_project_Api.Controllers
         {
             this.evaluationService = evaluationService;
         }
-        [HttpPost("/Evaluation/{tenderId}")]
+        [HttpPost("/evaluations/{tenderId}")]
         public async Task<IActionResult> evaluateBid(int tenderId, [FromBody] WinBidDTO evaluationDTO)
         {
             var result = await evaluationService.addEvaluationForTender(tenderId, evaluationDTO);
             return Ok(result);
         }
-        [HttpGet("/Evaluations/TenderBids/{tenderId}")]
+        [HttpGet("/evaluations/tenderBids/{tenderId}")]
         public async Task<IActionResult> getBidsByTenderId(int tenderId)
         {
             var result = await evaluationService.getBidsByTenderId(tenderId);
             return Ok(result);
         }
-        [HttpGet("/Evaluations/TenderBids/ascending/{tenderId}")]
+        [HttpGet("/evaluations/tenderBids/sort/price-asc/{tenderId}")]
         public async Task<IActionResult> getBidsByTenderIdAscending(int tenderId)
         {
             var result = await evaluationService.getBidsDecresingPrice(tenderId);
             return Ok(result);
         }
-        [HttpGet("/Evaluations/bidDocuments/{bidId}")]
+        [HttpGet("/evaluations/bidDocuments/{bidId}")]
         public async Task<IActionResult> getDocBids(int bidId) { 
 
             var result=await evaluationService.getBidDoc(bidId);
             return Ok(result);
 
         }
-        [HttpGet("/Evaluations/FinancialProposal/{bidId}")]
+        [HttpGet("/evaluations/einancialProposal/{bidId}")]
         public async Task<IActionResult> getFinancialProposal(int bidId) {
             return Ok(await evaluationService.GetFinancialProposalResponses(bidId));
         }

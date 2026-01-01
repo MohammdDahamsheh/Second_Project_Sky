@@ -18,7 +18,7 @@ namespace Second_project_Api.Controllers
             this.tenderService = tenderService;
         }
         
-        [HttpPost("/Tenders")]
+        [HttpPost("/tenders")]
         public async Task<IActionResult> AddTender([FromBody] TenderDTO tender)
         {
             var result = await tenderService.AddTender(tender,int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!));
@@ -28,19 +28,19 @@ namespace Second_project_Api.Controllers
             }
             return BadRequest("Failed to add tender");
         }
-        [HttpPost("/Tenders/Documents")]
+        [HttpPost("/tenders/Documents")]
         public async Task<IActionResult> addDocumentTender([FromBody] TenderDocumentDTO tenderDocument)
         {
             return Ok(await tenderService.addTenderDocument(tenderDocument));
         }
         
-        [HttpPost("/Tenders/eligibilityCriterias")]
+        [HttpPost("/tenders/eligibilityCriterias")]
         public async Task<IActionResult> addEligibilityCriterias([FromBody] EligibilityCriteriaDTO eligibilityCriteriaDTO)
         {
             var result = await tenderService.AddEligibilityCriteria(eligibilityCriteriaDTO);
             return Ok(result);
         }
-        [HttpPut("/Tenders")]
+        [HttpPut("/tenders")]
         public async Task<IActionResult> UpdateTender([FromBody] UpdateTenderDTO tender)
         {
             var result = await tenderService.UpdateTender(tender);
@@ -50,14 +50,14 @@ namespace Second_project_Api.Controllers
             }
             return BadRequest("Failed to update tender");
         }
-        [HttpGet("/Tenders/Open")]
+        [HttpGet("/tenders/Open")]
         public async Task<IActionResult> GetOpenTenders()
         {
             var tenders = await tenderService.getOpenTenders();
             return Ok(tenders);
 
         }
-        [HttpGet("/Tenders/eligibilityCriterias/{tenderId}")]
+        [HttpGet("/tenders/eligibilityCriterias/{tenderId}")]
         public async Task<IActionResult> getEligibilityCriterias(int tenderId)
         {
             var result = await tenderService.getEligibilityCriterias(tenderId);
@@ -65,14 +65,14 @@ namespace Second_project_Api.Controllers
         }
 
 
-        [HttpGet("/Tenders")]
+        [HttpGet("/tenders")]
         public async Task<IActionResult> GetAllTenders()
         {
             var tenders = await tenderService.GetAllTenders();
             return Ok(tenders);
 
         }
-        [HttpGet("/Tenders/{id}")]
+        [HttpGet("/tenders/{id}")]
         public async Task<IActionResult> GetTenderById(int id)
         {
             var tender = await tenderService.GetTenderById(id);
@@ -80,7 +80,7 @@ namespace Second_project_Api.Controllers
         }
 
 
-        [HttpGet("/Documents/{tenderId}")]
+        [HttpGet("/documents/{tenderId}")]
         public async Task<IActionResult> getTenderDocs(int tenderId) { 
         
             var result= await tenderService.getTenderDoc(tenderId);
