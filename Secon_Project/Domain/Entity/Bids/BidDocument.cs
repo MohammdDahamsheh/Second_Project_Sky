@@ -17,9 +17,9 @@ namespace Domain.Entity.Bids
         public int technicalProposalId { get; set; }
         public TechnicalProposal technicalProposal { get; set; }
         public ICollection<FinancialProposal> financialProposal { get; private set; }
-        public string companyRegistrationCertificate { get; set; }
-        public string taxComplianceCertificate { get; set; }
-        public string financialStatementsLast_2Years { get; set; }
+        public byte[] companyRegistrationCertificate { get; set; }
+        public byte[] taxComplianceCertificate { get; set; }
+        public byte[] financialStatementsLast_2Years { get; set; }
 
         public void addFinancialProposal(FinancialProposal financialProposal)
         {

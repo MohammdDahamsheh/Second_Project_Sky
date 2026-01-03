@@ -1,9 +1,10 @@
-﻿using Applecation.Repository;
-using Applecation.DTOs;
+﻿using Applecation.DTOs;
+using Applecation.Repository;
+using Applecation.Response;
 using Domain.Entity;
 using Domain.Entity.Bids;
-using Applecation.Response;
 using Infrastrucure;
+using System.IO;
 
 namespace Applecation.Service
 {
@@ -88,20 +89,29 @@ namespace Applecation.Service
             var bidDoc = (from bd in context.bidDocuments
                             where bd.bidId == bidDocumentDTO.bidId
                             select bd).FirstOrDefault();
+            var stream = new MemoryStream();
+
             if (bidDoc != null) {
 
                 var tp= (from t in context.technicalProposals
                           where t.TechnicalProposalId == bidDoc.technicalProposalId
                          select t).First();
                 
-                tp.technicalApproachDescription = bidDocumentDTO.technicalApproachDescription;
-                tp.methodologyDescription = bidDocumentDTO.methodologyDescription;
-                tp.proposedSolution = bidDocumentDTO.proposedSolution;
+                //tp.technicalApproachDescription = bidDocumentDTO.technicalApproachDescription;
+                //tp.methodologyDescription = bidDocumentDTO.methodologyDescription;
+                //tp.proposedSolution = bidDocumentDTO.proposedSolution;
+                await bidDocumentDTO.technicalProposalDocument.CopyToAsync(stream);
+                tp.technicalProposalDocument = stream.ToArray();
+
+                await bidDocumentDTO.companyRegistrationCertificate.CopyToAsync(stream);
+                bidDoc.companyRegistrationCertificate = stream.ToArray();
+                await bidDocumentDTO.taxComplianceCertificate.CopyToAsync(stream);
+                bidDoc.taxComplianceCertificate = stream.ToArray();
+                await bidDocumentDTO.financialStatementsLast_2Years.CopyToAsync(stream);
+                bidDoc.financialStatementsLast_2Years = stream.ToArray();
 
 
-                bidDoc.companyRegistrationCertificate = bidDocumentDTO.companyRegistrationCertificate;
-                bidDoc.taxComplianceCertificate = bidDocumentDTO.taxComplianceCertificate;
-                bidDoc.financialStatementsLast_2Years = bidDocumentDTO.financialStatementsLast_2Years;
+
                 await unitOfWork.SaveChangesAsync();
                 var bidDocResponse = new BidDocumentResponse
                 {
@@ -118,18 +128,33 @@ namespace Applecation.Service
             }
             else
             {
+                await bidDocumentDTO.technicalProposalDocument.CopyToAsync(stream);
                 var technicalProposal = new TechnicalProposal
                 {
-                    technicalApproachDescription = bidDocumentDTO.technicalApproachDescription,
-                    methodologyDescription = bidDocumentDTO.methodologyDescription,
-                    proposedSolution = bidDocumentDTO.proposedSolution
+                    //technicalApproachDescription = bidDocumentDTO.technicalApproachDescription,
+                    //methodologyDescription = bidDocumentDTO.methodologyDescription,
+                    //proposedSolution = bidDocumentDTO.proposedSolution
+                    technicalProposalDocument = stream.ToArray()
+
                 };
+
+
+                await bidDocumentDTO.companyRegistrationCertificate.CopyToAsync(stream);
+                var companyRegistrationCertificate1 = stream.ToArray();
+                await bidDocumentDTO.taxComplianceCertificate.CopyToAsync(stream);
+                var taxComplianceCertificate1 = stream.ToArray();
+                await bidDocumentDTO.financialStatementsLast_2Years.CopyToAsync(stream);
+                var financialStatementsLast_2Years1 = stream.ToArray();
+
                 var bidDocument = new BidDocument
                 {
                     bidId = bidDocumentDTO.bidId,
-                    companyRegistrationCertificate = bidDocumentDTO.companyRegistrationCertificate,
-                    taxComplianceCertificate = bidDocumentDTO.taxComplianceCertificate,
-                    financialStatementsLast_2Years = bidDocumentDTO.financialStatementsLast_2Years,
+                    //companyRegistrationCertificate = bidDocumentDTO.companyRegistrationCertificate,
+                    //taxComplianceCertificate = bidDocumentDTO.taxComplianceCertificate,
+                    //financialStatementsLast_2Years = bidDocumentDTO.financialStatementsLast_2Years,
+                    companyRegistrationCertificate = companyRegistrationCertificate1,
+                    taxComplianceCertificate = taxComplianceCertificate1,
+                    financialStatementsLast_2Years = financialStatementsLast_2Years1,
                     technicalProposal = technicalProposal
                 };
                 await unitOfWorkBidDocument.GetRepository.AddAsync(bidDocument);

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,16 +12,16 @@ namespace Applecation.DTOs
         public BidDocumentDTO() { }
         public int bidId { get; set; }
         //  company proposal details
-        public string companyRegistrationCertificate { get; set; }
-        public string taxComplianceCertificate { get; set; }
-        public string financialStatementsLast_2Years { get; set; }
+        public IFormFile companyRegistrationCertificate { get; set; }
+        public IFormFile taxComplianceCertificate { get; set; }
+        public IFormFile financialStatementsLast_2Years { get; set; }
 
         //technical proposal details
-        public string technicalApproachDescription { get; set; }
-        public string methodologyDescription { get; set; }
-        public string proposedSolution { get; set; }
+        //public string technicalApproachDescription { get; set; }
+        //public string methodologyDescription { get; set; }
+        //public string proposedSolution { get; set; }
 
-       
+       public IFormFile technicalProposalDocument { get; set; }
 
 
     }
