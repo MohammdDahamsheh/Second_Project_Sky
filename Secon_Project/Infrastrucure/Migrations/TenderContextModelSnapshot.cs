@@ -362,9 +362,9 @@ namespace Infrastrucure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("documentPath")
+                    b.Property<byte[]>("documentFile")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("varbinary(max)");
 
                     b.Property<int>("tenderId")
                         .HasColumnType("int");

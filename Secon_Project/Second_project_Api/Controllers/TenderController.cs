@@ -28,12 +28,19 @@ namespace Second_project_Api.Controllers
             }
             return BadRequest("Failed to add tender");
         }
-        [HttpPost("/tenders/Documents")]
-        public async Task<IActionResult> addDocumentTender([FromBody] TenderDocumentDTO tenderDocument)
+        //[HttpPost("/tenders/Documents")]
+        //public async Task<IActionResult> addDocumentTender([FromBody] TenderDocumentDTO tenderDocument)
+        //{
+        //    return Ok(await tenderService.addTenderDocument(tenderDocument));
+        //}
+
+
+        [HttpPost("/tenders/uploadDocuments")]
+        public async Task<IActionResult> uploadDocsTender([FromForm] TenderDocumentUploadDTO tenderDocument)
         {
-            return Ok(await tenderService.addTenderDocument(tenderDocument));
+            return Ok(await tenderService.uploadTenderDocs(tenderDocument));
         }
-        
+
         [HttpPost("/tenders/eligibilityCriterias")]
         public async Task<IActionResult> addEligibilityCriterias([FromBody] EligibilityCriteriaDTO eligibilityCriteriaDTO)
         {

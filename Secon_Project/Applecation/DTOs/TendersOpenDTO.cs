@@ -24,7 +24,7 @@ namespace Applecation.DTOs
         //public TenderType tenderType { get; set; }
         public string tenderTypeName { get; set; }
 
-        public List<string>? tenderDocumentsPath { get;  set; }= new List<string>();
+        public List<byte[]>? tenderDocumentsPath { get;  set; }= new List<byte[]>();
         //public int tenderCategoryId { get; set; }
         //public TenderCategory tenderCategory { get; set; }
         public string tenderCategoryName { get; set; }

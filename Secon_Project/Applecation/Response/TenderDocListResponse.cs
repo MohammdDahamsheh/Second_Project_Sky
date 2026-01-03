@@ -11,7 +11,7 @@ namespace Applecation.Response
     {
         public TenderDocListResponse() { }
         public int tenderDocumentId { get; set; }
-        public string documentPath { get; set; }
+        public byte[] documentPath { get; set; }
         public string addBy { get; set; }
     }
 }
