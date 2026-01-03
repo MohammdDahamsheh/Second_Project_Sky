@@ -9,5 +9,6 @@ namespace Applecation.Repository.securityRepo
         Task<Users>addUserAsync(Users user);
         Task<Users>getByEmailAndRoleAsync(string email);
         Task AddUserRoles(UserRoles userRole);
+        Task UpdatePassword(Users user ,string newPassword);
     }
 }

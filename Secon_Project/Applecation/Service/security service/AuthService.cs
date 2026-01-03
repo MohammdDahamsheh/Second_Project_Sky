@@ -3,22 +3,22 @@ using Applecation.DTOs.security;
 using Domain.Entity;
 using Infrastrucure;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Security.Cryptography;
+using Applecation.Response;
 
 namespace Applecation.Service.security_service
 {
     public class AuthService
     {
+        private const int tokenLenght = 32;
+
         private readonly IUserRepo userRepo;
         private readonly PasswordService passwordService;
         private readonly JWTGenerater jwtGenerater;
         private readonly RoleRepo roleRepo;
         private readonly TenderContext context;
+        private readonly RandomNumberGenerator RandomNumberGentrator = RandomNumberGenerator.Create();
 
         public AuthService(TenderContext context,RoleRepo roleRepo,IUserRepo userRepo, PasswordService passwordService, JWTGenerater jwtGenerater)
         {
@@ -98,5 +98,33 @@ namespace Applecation.Service.security_service
 
 
         }
+        public async Task<ForgetPasswordResponse> forgetPassword(string email) { 
+            var user=await userRepo.getUserByEmail (email);
+            if (user == null) {
+                throw new Exception("No user with this email .....");
+            }
+
+            return new ForgetPasswordResponse
+            {
+                email = user.email,
+                resetToken = generateRandomToken()
+            };
+        }
+        public async Task<string> restPassword(restPasswordDTO restPasswordDTO) { 
+            var user =await userRepo.getUserByEmail(restPasswordDTO.email);
+            if (user == null)
+            {
+                throw new Exception("No user with this email .....");
+            }
+            await userRepo.UpdatePassword(user, passwordService.hashing(user, restPasswordDTO.Password));
+            return "Password updated successfully";
+        }
+        public string generateRandomToken() {
+            var massege=new byte[tokenLenght];
+            RandomNumberGenerator.Fill(massege);
+            return Convert.ToBase64String(massege);
+        }
+    
+    
     }
 }
