@@ -138,24 +138,44 @@ namespace Applecation.Service
             }
             return false;
         }
-        public async Task<bool> addTenderDocument(TenderDocumentDTO tenderDocumentDTO) {
+        //public async Task<bool> addTenderDocument(TenderDocumentDTO tenderDocumentDTO) {
            
-            var tender=await tenderUnitOfWork.GetRepository.GetByIdAsync(tenderDocumentDTO.tenderId);
+        //    var tender=await tenderUnitOfWork.GetRepository.GetByIdAsync(tenderDocumentDTO.tenderId);
+        //    var username = (from u in userUnitOfWork.GetRepository.GetAllAsync().Result
+        //                    where u.userId == tender.userId
+        //                    select u.userName).FirstOrDefault();
+                            
+        //    var tenderDocument = new TenderDocument(
+        //        tenderDocumentDTO.tenderId,
+        //        tenderDocumentDTO.documentPath,
+        //        username!
+        //        );
+        //    tender.AddTenderDocument(tenderDocument);
+        //    await tenderUnitOfWork.SaveChangesAsync();
+
+        //    return true;
+
+        //}
+
+        public async Task<bool> uploadTenderDocs(TenderDocumentUploadDTO tenderDocumentUploadDTO) { 
+            var tender= await tenderUnitOfWork.GetRepository.GetByIdAsync(tenderDocumentUploadDTO.tenderId);
+
             var username = (from u in userUnitOfWork.GetRepository.GetAllAsync().Result
                             where u.userId == tender.userId
-                            select u.userName).FirstOrDefault();
-                            
+                            select u.userName).First();
+            var stream = new MemoryStream();
+            await tenderDocumentUploadDTO.file.CopyToAsync(stream);
             var tenderDocument = new TenderDocument(
-                tenderDocumentDTO.tenderId,
-                tenderDocumentDTO.documentPath,
-                username!
+                tenderDocumentUploadDTO.tenderId,
+                stream.ToArray(),
+                username
                 );
             tender.AddTenderDocument(tenderDocument);
             await tenderUnitOfWork.SaveChangesAsync();
-
             return true;
-
         }
+
+
         public async Task<IEnumerable<TendersOpenDTO>> getOpenTenders() {
             var allTenders = await (from t in context.tenders
                                     join type in context.tenderTypes
@@ -175,7 +195,7 @@ namespace Applecation.Service
                                         tenderDocumentsPath = (
                                         from doc in t.tenderDocuments
                                         where doc.tenderId == t.tenderId
-                                        select doc.documentPath
+                                        select doc.documentFile
 
                                         ).ToList(),
                                         phoneNumber = t.user.phoneNumber,
@@ -231,7 +251,7 @@ namespace Applecation.Service
                                 select new TenderDocListResponse { 
                                 tenderDocumentId = td.tenderDocumentId,
                                 addBy=td.addBy,
-                                documentPath=td.documentPath
+                                documentPath=td.documentFile
                                 }
                                 ).ToListAsync();
             return result;

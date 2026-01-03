@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastrucure.Migrations
 {
     [DbContext(typeof(TenderContext))]
-    [Migration("20260101122104_update_DB_Relations")]
-    partial class update_DB_Relations
+    [Migration("20260103082936_ADD_DB")]
+    partial class ADD_DB
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -278,9 +278,12 @@ namespace Infrastrucure.Migrations
 
                     b.Property<string>("roleName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("roleId");
+
+                    b.HasIndex("roleName")
+                        .IsUnique();
 
                     b.ToTable("Roles");
                 });
@@ -340,9 +343,12 @@ namespace Infrastrucure.Migrations
 
                     b.Property<string>("categoryName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("tenderCategoryId");
+
+                    b.HasIndex("categoryName")
+                        .IsUnique();
 
                     b.ToTable("tenderCategories");
                 });
@@ -359,9 +365,9 @@ namespace Infrastrucure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("documentPath")
+                    b.Property<byte[]>("documentFile")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("varbinary(max)");
 
                     b.Property<int>("tenderId")
                         .HasColumnType("int");
@@ -383,9 +389,12 @@ namespace Infrastrucure.Migrations
 
                     b.Property<string>("typeName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("tenderTypeId");
+
+                    b.HasIndex("typeName")
+                        .IsUnique();
 
                     b.ToTable("tenderTypes");
                 });
