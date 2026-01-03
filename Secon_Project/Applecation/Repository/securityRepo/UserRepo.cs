@@ -47,5 +47,12 @@ namespace Applecation.Repository.securityRepo
            
             return user;
         }
+
+        public Task UpdatePassword(Users user, string newPassword)
+        {
+            user.userPassword = newPassword;
+            context.Users.Update(user);
+            return context.SaveChangesAsync();
+        }
     }
 }
