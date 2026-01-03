@@ -24,7 +24,7 @@ namespace Second_project_Api.Controllers
             return Ok(result);
         }
         [HttpPost("/bids/documents")]
-        public async Task<IActionResult> addDocumentBid([FromBody] BidDocumentDTO bidDocument)
+        public async Task<IActionResult> addDocumentBid([FromForm] BidDocumentDTO bidDocument)
         {
             var result = await bidService.addDocument(bidDocument);
             return Ok(result);

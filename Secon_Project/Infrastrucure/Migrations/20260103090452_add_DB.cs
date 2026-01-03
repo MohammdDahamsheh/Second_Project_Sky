@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Infrastrucure.Migrations
 {
     /// <inheritdoc />
-    public partial class ADD_DB : Migration
+    public partial class add_DB : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -47,9 +47,7 @@ namespace Infrastrucure.Migrations
                 {
                     TechnicalProposalId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    technicalApproachDescription = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    methodologyDescription = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    proposedSolution = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    technicalProposalDocument = table.Column<byte[]>(type: "varbinary(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -243,9 +241,9 @@ namespace Infrastrucure.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     bidId = table.Column<int>(type: "int", nullable: false),
                     technicalProposalId = table.Column<int>(type: "int", nullable: false),
-                    companyRegistrationCertificate = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    taxComplianceCertificate = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    financialStatementsLast_2Years = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    companyRegistrationCertificate = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
+                    taxComplianceCertificate = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
+                    financialStatementsLast_2Years = table.Column<byte[]>(type: "varbinary(max)", nullable: false)
                 },
                 constraints: table =>
                 {

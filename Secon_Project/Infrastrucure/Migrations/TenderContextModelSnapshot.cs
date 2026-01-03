@@ -73,17 +73,17 @@ namespace Infrastrucure.Migrations
                     b.Property<int>("bidId")
                         .HasColumnType("int");
 
-                    b.Property<string>("companyRegistrationCertificate")
+                    b.Property<byte[]>("companyRegistrationCertificate")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("varbinary(max)");
 
-                    b.Property<string>("financialStatementsLast_2Years")
+                    b.Property<byte[]>("financialStatementsLast_2Years")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("varbinary(max)");
 
-                    b.Property<string>("taxComplianceCertificate")
+                    b.Property<byte[]>("taxComplianceCertificate")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("varbinary(max)");
 
                     b.Property<int>("technicalProposalId")
                         .HasColumnType("int");
@@ -194,17 +194,9 @@ namespace Infrastrucure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TechnicalProposalId"));
 
-                    b.Property<string>("methodologyDescription")
+                    b.Property<byte[]>("technicalProposalDocument")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("proposedSolution")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("technicalApproachDescription")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("varbinary(max)");
 
                     b.HasKey("TechnicalProposalId");
 
